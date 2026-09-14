@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createServerClientBound } from "@/lib/supabase/client";
+import { createAnonClient } from "@/lib/supabase/client";
 import type {
   Doctor,
   GalleryCategory,
@@ -22,7 +22,7 @@ const opts: { revalidate: number; tags: string[] } = { revalidate: 300, tags: [C
 
 export const getCategories = unstable_cache(
   async (): Promise<ServiceCategory[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("service_categories")
       .select("*")
@@ -36,7 +36,7 @@ export const getCategories = unstable_cache(
 
 export const getCategoryBySlug = unstable_cache(
   async (slug: string): Promise<ServiceCategory | null> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("service_categories")
       .select("*")
@@ -51,7 +51,7 @@ export const getCategoryBySlug = unstable_cache(
 
 export const getServices = unstable_cache(
   async (): Promise<Service[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("services")
       .select("*")
@@ -65,7 +65,7 @@ export const getServices = unstable_cache(
 
 export const getServicesByCategory = unstable_cache(
   async (categoryId: string): Promise<Service[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("services")
       .select("*")
@@ -80,7 +80,7 @@ export const getServicesByCategory = unstable_cache(
 
 export const getFeaturedServices = unstable_cache(
   async (): Promise<Service[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("services")
       .select("*")
@@ -96,7 +96,7 @@ export const getFeaturedServices = unstable_cache(
 
 export const getServiceBySlug = unstable_cache(
   async (slug: string): Promise<Service | null> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("services")
       .select("*")
@@ -111,7 +111,7 @@ export const getServiceBySlug = unstable_cache(
 
 export const getServiceBlocks = unstable_cache(
   async (serviceId: string): Promise<ServiceContentBlock[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("service_content_blocks")
       .select("*")
@@ -126,7 +126,7 @@ export const getServiceBlocks = unstable_cache(
 
 export const getFaqs = unstable_cache(
   async (optsArgs: { serviceId?: string; categoryId?: string }): Promise<ServiceFaq[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     let q = supabase
       .from("service_faqs")
       .select("*")
@@ -143,7 +143,7 @@ export const getFaqs = unstable_cache(
 
 export const getDoctors = unstable_cache(
   async (type?: string): Promise<Doctor[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     let q = supabase
       .from("doctors")
       .select("*")
@@ -159,7 +159,7 @@ export const getDoctors = unstable_cache(
 
 export const getDoctorBySlug = unstable_cache(
   async (slug: string): Promise<Doctor | null> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("doctors")
       .select("*")
@@ -174,7 +174,7 @@ export const getDoctorBySlug = unstable_cache(
 
 export const getGalleryItems = unstable_cache(
   async (type?: "normal" | "before_after"): Promise<GalleryItem[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     let q = supabase
       .from("gallery_items")
       .select("*")
@@ -190,7 +190,7 @@ export const getGalleryItems = unstable_cache(
 
 export const getGalleryCategories = unstable_cache(
   async (): Promise<GalleryCategory[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("gallery_categories")
       .select("*")
@@ -204,7 +204,7 @@ export const getGalleryCategories = unstable_cache(
 
 export const getVideos = unstable_cache(
   async (): Promise<Video[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("videos")
       .select("*")
@@ -218,7 +218,7 @@ export const getVideos = unstable_cache(
 
 export const getVideoCategories = unstable_cache(
   async (): Promise<VideoCategory[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("video_categories")
       .select("*")
@@ -232,7 +232,7 @@ export const getVideoCategories = unstable_cache(
 
 export const getTestimonials = unstable_cache(
   async (): Promise<Testimonial[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("testimonials")
       .select("*")
@@ -246,7 +246,7 @@ export const getTestimonials = unstable_cache(
 
 export const getStatistics = unstable_cache(
   async (): Promise<Statistic[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("statistics")
       .select("*")
@@ -260,7 +260,7 @@ export const getStatistics = unstable_cache(
 
 export const getHeroSlides = unstable_cache(
   async (): Promise<HeroSlide[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("hero_slides")
       .select("*")
@@ -274,7 +274,7 @@ export const getHeroSlides = unstable_cache(
 
 export const getPageBySlug = unstable_cache(
   async (slug: string): Promise<Page | null> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("pages")
       .select("*")
@@ -289,7 +289,7 @@ export const getPageBySlug = unstable_cache(
 
 export const getPageSections = unstable_cache(
   async (pageId: string): Promise<PageSection[]> => {
-    const supabase = await createServerClientBound();
+    const supabase = createAnonClient();
     const { data } = await supabase
       .from("page_sections")
       .select("*")
