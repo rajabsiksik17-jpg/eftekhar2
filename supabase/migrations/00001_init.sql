@@ -705,36 +705,61 @@ alter table public.search_console_integrations enable row level security;
 alter table public.notifications enable row level security;
 
 -- ---- PUBLIC READ TABLES (anon can SELECT) ----
+drop policy if exists "public select pages" on public.pages;
 create policy "public select pages" on public.pages for select using (is_active = true);
+drop policy if exists "public select page_sections" on public.page_sections;
 create policy "public select page_sections" on public.page_sections for select using (is_active = true);
+drop policy if exists "public select page_section_items" on public.page_section_items;
 create policy "public select page_section_items" on public.page_section_items for select using (is_active = true);
+drop policy if exists "public select service_categories" on public.service_categories;
 create policy "public select service_categories" on public.service_categories for select using (is_active = true);
+drop policy if exists "public select services" on public.services;
 create policy "public select services" on public.services for select using (is_active = true);
+drop policy if exists "public select service_content_blocks" on public.service_content_blocks;
 create policy "public select service_content_blocks" on public.service_content_blocks for select using (is_active = true);
+drop policy if exists "public select service_faqs" on public.service_faqs;
 create policy "public select service_faqs" on public.service_faqs for select using (is_active = true);
+drop policy if exists "public select doctors" on public.doctors;
 create policy "public select doctors" on public.doctors for select using (is_active = true);
+drop policy if exists "public select doctor_specialties" on public.doctor_specialties;
 create policy "public select doctor_specialties" on public.doctor_specialties for select using (true);
+drop policy if exists "public select doctor_services" on public.doctor_services;
 create policy "public select doctor_services" on public.doctor_services for select using (true);
+drop policy if exists "public select doctor_categories" on public.doctor_categories;
 create policy "public select doctor_categories" on public.doctor_categories for select using (true);
+drop policy if exists "public select gallery_categories" on public.gallery_categories;
 create policy "public select gallery_categories" on public.gallery_categories for select using (is_active = true);
+drop policy if exists "public select gallery_items" on public.gallery_items;
 create policy "public select gallery_items" on public.gallery_items for select using (is_active = true);
+drop policy if exists "public select video_categories" on public.video_categories;
 create policy "public select video_categories" on public.video_categories for select using (is_active = true);
+drop policy if exists "public select videos" on public.videos;
 create policy "public select videos" on public.videos for select using (is_active = true);
+drop policy if exists "public select testimonials" on public.testimonials;
 create policy "public select testimonials" on public.testimonials for select using (is_active = true);
+drop policy if exists "public select statistics" on public.statistics;
 create policy "public select statistics" on public.statistics for select using (is_active = true);
+drop policy if exists "public select hero_slides" on public.hero_slides;
 create policy "public select hero_slides" on public.hero_slides for select using (is_active = true);
+drop policy if exists "public select social_links" on public.social_links;
 create policy "public select social_links" on public.social_links for select using (is_active = true);
+drop policy if exists "public select navigation_items" on public.navigation_items;
 create policy "public select navigation_items" on public.navigation_items for select using (is_active = true);
+drop policy if exists "public select contact_settings" on public.contact_settings;
 create policy "public select contact_settings" on public.contact_settings for select using (true);
+drop policy if exists "public select footer_settings" on public.footer_settings;
 create policy "public select footer_settings" on public.footer_settings for select using (true);
+drop policy if exists "public select seo_metadata" on public.seo_metadata;
 create policy "public select seo_metadata" on public.seo_metadata for select using (true);
 
 -- site_settings holds both public and private keys; expose only public keys
+drop policy if exists "public select site_settings" on public.site_settings;
 create policy "public select site_settings" on public.site_settings for select using (key not like '%.secret' and key not like 'smtp%' and key not like 'imap%');
 
 -- ---- SENSITIVE TABLES: no policies for anon; service role bypasses RLS ----
 
 -- Allow authenticated admins to read their own profile (defense in depth)
+drop policy if exists "own profile select" on public.profiles;
 create policy "own profile select" on public.profiles for select using (auth.uid() = id);
 
 -- ------------------------------------------------------------
@@ -743,5 +768,7 @@ create policy "own profile select" on public.profiles for select using (auth.uid
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('media', 'media', true, 52428800, array['image/jpeg','image/png','image/webp','image/svg+xml','image/gif','video/mp4','video/webm','application/pdf'])
 on conflict (id) do nothing;
+
+drop policy if exists "public read media" on storage.objects;
 
 create policy "public read media" on storage.objects for select using (bucket_id = 'media');
