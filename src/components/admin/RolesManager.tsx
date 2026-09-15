@@ -104,12 +104,12 @@ export function RolesManager() {
         <div className="space-y-6">
           {groups.map(([group, perms]) => (
             <div key={group}>
-              <h3 className="mb-2 text-sm font-semibold text-brand-500">{group}</h3>
+              <h3 className="mb-2 text-sm font-semibold text-ink-muted">{group}</h3>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {perms.map((p) => (
                   <label key={p.id} className="flex items-center gap-2 rounded-xl border border-brand-950/10 px-3 py-2 text-sm">
                     <input type="checkbox" checked={selectedIds.includes(p.id)} onChange={() => toggle(p.id)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
-                    <span className="text-brand-800">{p.slug}</span>
+                    <span className="text-ink-secondary">{p.slug}</span>
                   </label>
                 ))}
               </div>

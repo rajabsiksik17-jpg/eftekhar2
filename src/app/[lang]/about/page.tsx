@@ -10,6 +10,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { Icon } from "@/components/icons";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { ImageTextSection } from "@/components/sections/ImageTextSection";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import type { PageSection } from "@/lib/types";
 
@@ -35,6 +36,7 @@ export default async function AboutPage({ params }: Props) {
 
   const intro = sections.find((s) => s.section_type === "introduction");
   const texts = sections.filter((s) => s.section_type === "text");
+  const imageTexts = sections.filter((s) => s.section_type === "image_text");
   const fields = form ? await getFormFields(form.id) : [];
 
   const crumb = { label: lang === "ar" ? "من نحن" : "About Us" };
@@ -56,6 +58,10 @@ export default async function AboutPage({ params }: Props) {
           </div>
         </section>
       )}
+
+      {imageTexts.map((s) => (
+        <ImageTextSection key={s.id} section={s} lang={lang} />
+      ))}
 
       {form && (
         <section className="bg-brand-50/50 py-20">

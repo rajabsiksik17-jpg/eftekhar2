@@ -15,7 +15,7 @@ export interface Appearance {
 export const DEFAULT_APPEARANCE: Appearance = {
   primary: "#2563eb",
   secondary: "#0ea5e9",
-  accent: "#0d9488",
+  accent: "#1d4ed8",
   logo: "",
   favicon: "",
   ga4_enabled: false,

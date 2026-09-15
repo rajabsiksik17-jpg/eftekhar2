@@ -24,7 +24,7 @@ export function FaqAccordion({ faqs, lang }: { faqs: ServiceFaq[]; lang: Lang })
               {lang === "ar" ? f.question_ar : f.question_en}
             </span>
             <ChevronDown
-              className={cn("h-5 w-5 shrink-0 text-brand-500 transition-transform", open === i && "rotate-180")}
+              className={cn("h-5 w-5 shrink-0 text-ink-muted transition-transform", open === i && "rotate-180")}
             />
           </button>
           {open === i && (

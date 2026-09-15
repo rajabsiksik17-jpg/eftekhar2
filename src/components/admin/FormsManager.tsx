@@ -197,14 +197,14 @@ export function FormsManager() {
                   {fields.map((f, i) => (
                     <div key={f.id} className={cn("flex items-center gap-3 rounded-xl border border-brand-950/10 p-3", !f.is_active && "opacity-50")}>
                       <div className="flex flex-col">
-                        <button onClick={() => reorder(i, -1)} className="rounded p-0.5 text-brand-500 hover:bg-brand-100"><ChevronUp className="h-4 w-4" /></button>
-                        <button onClick={() => reorder(i, 1)} className="rounded p-0.5 text-brand-500 hover:bg-brand-100"><ChevronDown className="h-4 w-4" /></button>
+                        <button onClick={() => reorder(i, -1)} className="rounded p-0.5 text-ink-muted hover:bg-brand-100"><ChevronUp className="h-4 w-4" /></button>
+                        <button onClick={() => reorder(i, 1)} className="rounded p-0.5 text-ink-muted hover:bg-brand-100"><ChevronDown className="h-4 w-4" /></button>
                       </div>
                       <div className="flex-1">
                         <div className="text-sm font-semibold text-brand-950">{String(f.label_ar ?? f.name)}</div>
-                        <div className="text-xs text-brand-500" dir="ltr">{String(f.name)} · {String(f.field_type)}{f.required ? " · مطلوب" : ""}</div>
+                        <div className="text-xs text-ink-muted" dir="ltr">{String(f.name)} · {String(f.field_type)}{f.required ? " · مطلوب" : ""}</div>
                       </div>
-                      <button onClick={() => toggleField(f)} className="rounded p-1.5 text-brand-500 hover:bg-brand-100">{f.is_active ? "إخفاء" : "إظهار"}</button>
+                      <button onClick={() => toggleField(f)} className="rounded p-1.5 text-ink-muted hover:bg-brand-100">{f.is_active ? "إخفاء" : "إظهار"}</button>
                       <button onClick={() => setEditing(f)} className="rounded p-1.5 text-brand-600 hover:bg-brand-100"><Pencil className="h-4 w-4" /></button>
                       <button onClick={() => deleteField(f)} className="rounded p-1.5 text-red-500 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
                     </div>
@@ -214,7 +214,7 @@ export function FormsManager() {
             </div>
           </>
         ) : (
-          <div className="card p-10 text-center text-brand-500">اختر نموذجًا من القائمة</div>
+          <div className="card p-10 text-center text-ink-muted">اختر نموذجًا من القائمة</div>
         )}
       </div>
 
@@ -315,7 +315,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       <div className="my-8 w-full max-w-xl rounded-2xl bg-white p-6" dir="rtl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-bold text-brand-950">{title}</h2>
-          <button onClick={onClose}><X className="h-5 w-5 text-brand-500" /></button>
+          <button onClick={onClose}><X className="h-5 w-5 text-ink-muted" /></button>
         </div>
         {children}
       </div>
@@ -336,7 +336,7 @@ function Field({ label, children, help }: { label: string; children: React.React
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <div className="flex items-end pb-2">
-      <label className="flex items-center gap-2 text-sm font-medium text-brand-800">
+      <label className="flex items-center gap-2 text-sm font-medium text-ink-secondary">
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
         {label}
       </label>

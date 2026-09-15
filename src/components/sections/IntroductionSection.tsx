@@ -2,6 +2,7 @@ import type { Lang } from "@/lib/i18n";
 import type { PageSection } from "@/lib/types";
 import { Icon } from "@/components/icons";
 import { SectionHeading } from "@/components/sections/SectionHeading";
+import { ImageIcon } from "lucide-react";
 
 interface Feature {
   icon?: string;
@@ -49,7 +50,7 @@ export function IntroductionSection({ section, lang }: { section: PageSection; l
             )}
           </div>
 
-          {image && (
+          {image ? (
             <div className="relative">
               <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-brand-100 to-accent-100 opacity-60" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -59,6 +60,13 @@ export function IntroductionSection({ section, lang }: { section: PageSection; l
                 className="w-full rounded-3xl object-cover shadow-soft ring-1 ring-brand-950/5"
                 loading="lazy"
               />
+            </div>
+          ) : (
+            <div className="relative flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-brand-300 bg-brand-50 text-brand-400">
+              <ImageIcon className="h-12 w-12" />
+              <p className="text-sm font-medium">
+                {lang === "ar" ? "لا توجد صورة حالياً" : "No image available yet"}
+              </p>
             </div>
           )}
         </div>

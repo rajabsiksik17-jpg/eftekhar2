@@ -31,7 +31,7 @@ export default async function VideosPage({ params }: Props) {
       <section className="py-16">
         <div className="container-px">
           {videos.length === 0 ? (
-            <p className="text-center text-brand-500">{lang === "ar" ? "لا توجد فيديوهات بعد." : "No videos yet."}</p>
+            <p className="text-center text-ink-muted">{lang === "ar" ? "لا توجد فيديوهات بعد." : "No videos yet."}</p>
           ) : (
             <VideoGallery videos={videos} lang={lang} />
           )}

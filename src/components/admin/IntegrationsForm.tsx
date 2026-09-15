@@ -53,7 +53,7 @@ export function IntegrationsForm() {
           <div className="flex items-end pb-1">
             <label className="flex items-center gap-3 rounded-xl border border-brand-950/15 px-4 py-2.5">
               <input type="checkbox" checked={Boolean(ga4.enabled)} onChange={(e) => setGa4({ ...ga4, enabled: e.target.checked })} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
-              <span className="text-sm font-medium text-brand-800">مفعّل</span>
+              <span className="text-sm font-medium text-ink-secondary">مفعّل</span>
             </label>
           </div>
         </div>
@@ -78,7 +78,7 @@ export function IntegrationsForm() {
           <div className="flex items-end pb-1">
             <label className="flex items-center gap-3 rounded-xl border border-brand-950/15 px-4 py-2.5">
               <input type="checkbox" checked={Boolean(sc.enabled)} onChange={(e) => setSc({ ...sc, enabled: e.target.checked })} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
-              <span className="text-sm font-medium text-brand-800">مفعّل</span>
+              <span className="text-sm font-medium text-ink-secondary">مفعّل</span>
             </label>
           </div>
         </div>

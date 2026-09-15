@@ -9,7 +9,7 @@ export default async function UsersPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">المستخدمون</h1>
-        <p className="text-sm text-brand-500">إدارة المستخدمين وأدوارهم</p>
+        <p className="text-sm text-ink-muted">إدارة المستخدمين وأدوارهم</p>
       </div>
       <UsersManager />
     </div>

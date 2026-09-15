@@ -54,6 +54,7 @@ const NAV: { group: string; items: { href: string; label: string; icon: React.Co
     group: "الموقع",
     items: [
       { href: "/admin/homepage", label: "الرئيسية", icon: Home },
+      { href: "/admin/about", label: "من نحن", icon: Users },
       { href: "/admin/pages", label: "الصفحات", icon: FileText },
       { href: "/admin/navigation", label: "القائمة", icon: MenuIcon },
     ],
@@ -240,7 +241,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <span className="text-sm font-medium text-brand-600">لوحة التحكم</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/ar" target="_blank" className="text-sm text-brand-600 hover:text-brand-800">
+            <Link href="/ar" target="_blank" className="text-sm text-brand-600 hover:text-ink-secondary">
               عرض الموقع
             </Link>
             <div className="flex items-center gap-2">
@@ -249,7 +250,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </span>
               <div className="hidden text-end sm:block">
                 <div className="text-sm font-medium text-brand-950">{me.user.full_name ?? me.email}</div>
-                <div className="text-xs text-brand-500">{me.user.is_super_admin ? "مدير عام" : "مدير"}</div>
+                <div className="text-xs text-ink-muted">{me.user.is_super_admin ? "مدير عام" : "مدير"}</div>
               </div>
             </div>
           </div>

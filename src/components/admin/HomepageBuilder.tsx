@@ -153,7 +153,7 @@ export function HomepageBuilder() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-brand-500">رتب الأقسام بالسحب أو الأسهم، وعدّل محتواها دون لمس الكود.</p>
+        <p className="text-sm text-ink-muted">رتب الأقسام بالسحب أو الأسهم، وعدّل محتواها دون لمس الكود.</p>
         <button onClick={() => setCreating(true)} className="btn-primary btn-md"><Plus className="h-4 w-4" /> إضافة قسم</button>
       </div>
 
@@ -161,18 +161,18 @@ export function HomepageBuilder() {
         {sections.map((s, i) => (
           <div key={s.id} className={cn("card flex items-center gap-3 p-4", !s.is_active && "opacity-60")}>
             <div className="flex flex-col gap-1">
-              <button onClick={() => reorder(i, -1)} className="rounded p-0.5 text-brand-500 hover:bg-brand-100"><ChevronUp className="h-4 w-4" /></button>
-              <button onClick={() => reorder(i, 1)} className="rounded p-0.5 text-brand-500 hover:bg-brand-100"><ChevronDown className="h-4 w-4" /></button>
+              <button onClick={() => reorder(i, -1)} className="rounded p-0.5 text-ink-muted hover:bg-brand-100"><ChevronUp className="h-4 w-4" /></button>
+              <button onClick={() => reorder(i, 1)} className="rounded p-0.5 text-ink-muted hover:bg-brand-100"><ChevronDown className="h-4 w-4" /></button>
             </div>
             <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-sm font-bold text-brand-600">{i + 1}</span>
             <div className="flex-1">
               <div className="font-semibold text-brand-950">
                 {typeLabel(s.section_type)}
-                {s.title_ar && <span className="ms-2 text-sm font-normal text-brand-500">{s.title_ar}</span>}
+                {s.title_ar && <span className="ms-2 text-sm font-normal text-ink-muted">{s.title_ar}</span>}
               </div>
               <div className="text-xs text-brand-400">النوع: {s.section_type}</div>
             </div>
-            <button onClick={() => toggleActive(s)} className="rounded p-1.5 text-brand-500 hover:bg-brand-100" title="تفعيل/تعطيل">
+            <button onClick={() => toggleActive(s)} className="rounded p-1.5 text-ink-muted hover:bg-brand-100" title="تفعيل/تعطيل">
               {s.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </button>
             <button onClick={() => setEditing(s)} className="rounded p-1.5 text-brand-600 hover:bg-brand-100"><Pencil className="h-4 w-4" /></button>
@@ -222,7 +222,7 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
       <div className="my-8 w-full max-w-lg rounded-2xl bg-white p-6" dir="rtl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-bold text-brand-950">{title}</h2>
-          <button onClick={onClose}><X className="h-5 w-5 text-brand-500" /></button>
+          <button onClick={onClose}><X className="h-5 w-5 text-ink-muted" /></button>
         </div>
         {children}
       </div>

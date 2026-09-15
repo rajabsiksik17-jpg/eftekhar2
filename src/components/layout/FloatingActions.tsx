@@ -56,7 +56,7 @@ export function FloatingActions(props: FloatingActionsProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.platform}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-brand-700 shadow-soft ring-1 ring-brand-950/10 transition hover:bg-brand-600 hover:text-white"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-brand-700 shadow-card ring-1 ring-brand-950/10 transition hover:bg-brand-600 hover:text-white"
               >
                 <Icon className="h-5 w-5" />
               </a>
@@ -65,40 +65,42 @@ export function FloatingActions(props: FloatingActionsProps) {
         </div>
       )}
 
-      {socialEnabled && activeSocial.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setSocialOpen((v) => !v)}
-          aria-label="Social media"
-          className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full shadow-soft transition",
-            socialOpen ? "bg-brand-950 text-white" : "bg-brand-600 text-white hover:bg-brand-700",
-          )}
-        >
-          {socialOpen ? <X className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
-        </button>
-      )}
+      <div className="flex items-center gap-2.5">
+        {backToTopEnabled && showTop && (
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Back to top"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-card transition hover:bg-brand-700"
+          >
+            <ArrowUp className="h-5 w-5" />
+          </button>
+        )}
 
-      {appointmentEnabled && !isAppointmentPage && (
-        <Link
-          href={`/${lang}${appointmentUrl === "/" ? "" : appointmentUrl}`}
-          className="btn-gold btn-md animate-pulse-soft"
-        >
-          <Calendar className="h-4 w-4" />
-          {appointmentText}
-        </Link>
-      )}
+        {appointmentEnabled && !isAppointmentPage && (
+          <Link
+            href={`/${lang}${appointmentUrl === "/" ? "" : appointmentUrl}`}
+            className="btn-primary btn-md shadow-soft"
+          >
+            <Calendar className="h-4 w-4" />
+            {appointmentText}
+          </Link>
+        )}
 
-      {backToTopEnabled && showTop && (
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Back to top"
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-950 text-white shadow-soft transition hover:bg-brand-800"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
-      )}
+        {socialEnabled && activeSocial.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setSocialOpen((v) => !v)}
+            aria-label="Social media"
+            className={cn(
+              "flex h-12 w-12 items-center justify-center rounded-full shadow-card transition",
+              socialOpen ? "bg-brand-950 text-white" : "bg-brand-600 text-white hover:bg-brand-700",
+            )}
+          >
+            {socialOpen ? <X className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
+          </button>
+        )}
+      </div>
     </div>
   );
 }

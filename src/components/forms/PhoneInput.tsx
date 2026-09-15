@@ -118,7 +118,7 @@ export function PhoneInput({
                 >
                   <span className="text-lg">{c.flag}</span>
                   <span className="flex-1 text-start">{lang === "ar" ? c.name_ar : c.name}</span>
-                  <span className="text-brand-500" dir="ltr">{c.dial}</span>
+                  <span className="text-ink-muted" dir="ltr">{c.dial}</span>
                   {c.code === country.code && <Check className="h-4 w-4 text-brand-600" />}
                 </button>
               </li>

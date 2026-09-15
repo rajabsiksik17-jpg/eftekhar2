@@ -17,7 +17,7 @@ export default async function AnalyticsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">Google Analytics</h1>
-        <p className="text-sm text-brand-500">حالة تكامل Google Analytics 4</p>
+        <p className="text-sm text-ink-muted">حالة تكامل Google Analytics 4</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -36,8 +36,8 @@ export default async function AnalyticsPage() {
             </div>
           </div>
           <dl className="mt-4 space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-brand-500">Measurement ID</dt><dd className="font-mono text-brand-800" dir="ltr">{ga4?.measurement_id || envId || "—"}</dd></div>
-            <div className="flex justify-between"><dt className="text-brand-500">معرّف البيئة</dt><dd className="font-mono text-brand-800" dir="ltr">{envId || "—"}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-muted">Measurement ID</dt><dd className="font-mono text-ink-secondary" dir="ltr">{ga4?.measurement_id || envId || "—"}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-muted">معرّف البيئة</dt><dd className="font-mono text-ink-secondary" dir="ltr">{envId || "—"}</dd></div>
           </dl>
           <p className="mt-4 rounded-xl bg-brand-50 p-3 text-xs text-brand-600">
             فعّل التتبع من صفحة التكاملات واضبط NEXT_PUBLIC_GOOGLE_ANALYTICS_ID في متغيرات البيئة. التقارير التفصيلية (المستخدمون، الجلسات، الصفحات) تظهر هنا عند ربط حساب الخدمة في Google Analytics Data API.

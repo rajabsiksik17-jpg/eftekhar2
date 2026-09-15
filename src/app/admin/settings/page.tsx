@@ -9,7 +9,7 @@ export default async function SettingsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">معلومات الموقع</h1>
-        <p className="text-sm text-brand-500">إعدادات الموقع والتواصل والفوتر</p>
+        <p className="text-sm text-ink-muted">إعدادات الموقع والتواصل والفوتر</p>
       </div>
       <SiteSettingsForm />
     </div>

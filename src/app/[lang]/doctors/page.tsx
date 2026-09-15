@@ -34,7 +34,7 @@ export default async function DoctorsPage({ params }: Props) {
       <section className="py-16">
         <div className="container-px">
           {doctors.length === 0 ? (
-            <p className="text-center text-brand-500">
+            <p className="text-center text-ink-muted">
               {lang === "ar" ? "لا يوجد أطباء بعد." : "No doctors yet."}
             </p>
           ) : (

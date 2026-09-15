@@ -16,7 +16,7 @@ export default async function SearchConsolePage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">Google Search Console</h1>
-        <p className="text-sm text-brand-500">حالة تكامل Search Console</p>
+        <p className="text-sm text-ink-muted">حالة تكامل Search Console</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -35,8 +35,8 @@ export default async function SearchConsolePage() {
             </div>
           </div>
           <dl className="mt-4 space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-brand-500">Site URL</dt><dd className="font-mono text-brand-800" dir="ltr">{gsc?.site_url || "—"}</dd></div>
-            <div className="flex justify-between"><dt className="text-brand-500">Service Account</dt><dd className="font-mono text-brand-800" dir="ltr">{gsc?.client_email || "—"}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-muted">Site URL</dt><dd className="font-mono text-ink-secondary" dir="ltr">{gsc?.site_url || "—"}</dd></div>
+            <div className="flex justify-between"><dt className="text-ink-muted">Service Account</dt><dd className="font-mono text-ink-secondary" dir="ltr">{gsc?.client_email || "—"}</dd></div>
           </dl>
           <p className="mt-4 rounded-xl bg-brand-50 p-3 text-xs text-brand-600">
             اربط حساب خدمة Google مع صلاحية الوصول إلى Search Console من صفحة التكاملات لعرض النقرات والانطباعات ومتوسط الترتيب.

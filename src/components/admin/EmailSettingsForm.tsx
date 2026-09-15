@@ -132,7 +132,7 @@ export function EmailSettingsForm() {
           <h2 className="font-bold text-brand-950">إعدادات SMTP (الإرسال)</h2>
           <div className="flex items-center gap-3">
             <StatusBadge status={data.smtp_status} />
-            <label className="flex items-center gap-2 text-sm font-medium text-brand-800">
+            <label className="flex items-center gap-2 text-sm font-medium text-ink-secondary">
               <input type="checkbox" checked={Boolean(data.smtp_enabled)} onChange={(e) => set("smtp_enabled", e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
               مفعّل
             </label>
@@ -172,7 +172,7 @@ export function EmailSettingsForm() {
           <h2 className="font-bold text-brand-950">إعدادات IMAP (الاستقبال)</h2>
           <div className="flex items-center gap-3">
             <StatusBadge status={data.imap_status} />
-            <label className="flex items-center gap-2 text-sm font-medium text-brand-800">
+            <label className="flex items-center gap-2 text-sm font-medium text-ink-secondary">
               <input type="checkbox" checked={Boolean(data.imap_enabled)} onChange={(e) => set("imap_enabled", e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
               مفعّل
             </label>

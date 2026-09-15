@@ -9,7 +9,7 @@ export default async function FormsAdminPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">النماذج (Form Builder)</h1>
-        <p className="text-sm text-brand-500">إدارة نماذج التواصل وحجز الموعد وحقولها</p>
+        <p className="text-sm text-ink-muted">إدارة نماذج التواصل وحجز الموعد وحقولها</p>
       </div>
       <FormsManager />
     </div>

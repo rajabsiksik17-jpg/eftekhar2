@@ -9,7 +9,7 @@ export default async function RolesPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">الأدوار والصلاحيات</h1>
-        <p className="text-sm text-brand-500">إدارة الأدوار وصلاحياتها</p>
+        <p className="text-sm text-ink-muted">إدارة الأدوار وصلاحياتها</p>
       </div>
       <RolesManager />
     </div>

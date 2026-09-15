@@ -14,6 +14,7 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
+import { IconPicker } from "@/components/admin/IconPicker";
 
 type Row = Record<string, unknown>;
 
@@ -149,13 +150,13 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={schema.columns.length + 1} className="py-10 text-center text-brand-500">
+                  <td colSpan={schema.columns.length + 1} className="py-10 text-center text-ink-muted">
                     <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={schema.columns.length + 1} className="py-10 text-center text-brand-500">
+                  <td colSpan={schema.columns.length + 1} className="py-10 text-center text-ink-muted">
                     لا توجد بيانات
                   </td>
                 </tr>
@@ -163,16 +164,16 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
                 rows.map((row, i) => (
                   <tr key={String(row.id)} className="border-b border-brand-950/5 hover:bg-brand-50/40">
                     {schema.columns.map((c) => (
-                      <td key={c.key} className="max-w-[220px] truncate px-4 py-3 text-brand-800">
+                      <td key={c.key} className="max-w-[220px] truncate px-4 py-3 text-ink-secondary">
                         <Cell row={row} column={c} />
                       </td>
                     ))}
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => reorder(i, -1)} className="rounded p-1 text-brand-500 hover:bg-brand-100" aria-label="Up">
+                        <button onClick={() => reorder(i, -1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Up">
                           <ChevronUp className="h-4 w-4" />
                         </button>
-                        <button onClick={() => reorder(i, 1)} className="rounded p-1 text-brand-500 hover:bg-brand-100" aria-label="Down">
+                        <button onClick={() => reorder(i, 1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Down">
                           <ChevronDown className="h-4 w-4" />
                         </button>
                         {schema.fields.length > 0 && (
@@ -289,7 +290,7 @@ function EntityForm({
           <h2 className="text-lg font-bold text-brand-950">
             {initial.id ? `تعديل ${schema.singular}` : `إضافة ${schema.singular}`}
           </h2>
-          <button onClick={onClose} className="rounded-lg p-1 text-brand-500 hover:bg-brand-50" aria-label="Close">
+          <button onClick={onClose} className="rounded-lg p-1 text-ink-muted hover:bg-brand-50" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -337,7 +338,7 @@ function FieldInput({
       ) : field.type === "boolean" ? (
         <label className="flex items-center gap-2 rounded-xl border border-brand-950/15 px-4 py-2.5">
           <input type="checkbox" checked={Boolean(value)} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
-          <span className="text-sm text-brand-800">مفعّل</span>
+          <span className="text-sm text-ink-secondary">مفعّل</span>
         </label>
       ) : field.type === "select" ? (
         <select className="input" value={String(value ?? "")} onChange={(e) => onChange(e.target.value)}>
@@ -348,6 +349,8 @@ function FieldInput({
         </select>
       ) : field.type === "date" ? (
         <input type="date" className="input" value={String(value ?? "")} onChange={(e) => onChange(e.target.value)} />
+      ) : field.type === "icon" ? (
+        <IconPicker value={String(value ?? "")} onChange={onChange} />
       ) : (
         <input
           type={field.type === "number" ? "number" : "text"}

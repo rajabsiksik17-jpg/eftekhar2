@@ -73,15 +73,15 @@ export function SecurityPage() {
             {loading ? (
               <tr><td colSpan={6} className="py-10 text-center"><Loader2 className="mx-auto h-6 w-6 animate-spin text-brand-600" /></td></tr>
             ) : sessions.length === 0 ? (
-              <tr><td colSpan={6} className="py-10 text-center text-brand-500">لا توجد جلسات</td></tr>
+              <tr><td colSpan={6} className="py-10 text-center text-ink-muted">لا توجد جلسات</td></tr>
             ) : (
               sessions.map((s) => (
                 <tr key={s.id} className="border-b border-brand-950/5">
-                  <td className="px-4 py-3 text-brand-800">
+                  <td className="px-4 py-3 text-ink-secondary">
                     {s.device} {s.is_current && <span className="ms-1 rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">الحالية</span>}
                   </td>
-                  <td className="px-4 py-3 text-brand-800">{s.browser}</td>
-                  <td className="px-4 py-3 text-brand-800">{s.os}</td>
+                  <td className="px-4 py-3 text-ink-secondary">{s.browser}</td>
+                  <td className="px-4 py-3 text-ink-secondary">{s.os}</td>
                   <td className="px-4 py-3 text-brand-600" dir="ltr">{s.ip ?? "—"}</td>
                   <td className="px-4 py-3 text-brand-600">{new Date(s.last_active_at).toLocaleString("ar")}</td>
                   <td className="px-4 py-3 text-end">

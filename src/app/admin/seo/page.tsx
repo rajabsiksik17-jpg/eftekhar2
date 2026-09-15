@@ -11,7 +11,7 @@ export default async function SeoPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">SEO</h1>
-        <p className="text-sm text-brand-500">إدارة بيانات SEO لكل مسار</p>
+        <p className="text-sm text-ink-muted">إدارة بيانات SEO لكل مسار</p>
       </div>
       <EntityManager entity="seo" schema={schema} />
     </div>

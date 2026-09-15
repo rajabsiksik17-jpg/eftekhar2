@@ -69,7 +69,7 @@ export function SearchDialog({ open, onClose, lang }: SearchDialogProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 border-b border-brand-950/10 pb-3">
-          <Search className="h-5 w-5 text-brand-500" />
+          <Search className="h-5 w-5 text-ink-muted" />
           <input
             ref={inputRef}
             value={query}
@@ -77,19 +77,19 @@ export function SearchDialog({ open, onClose, lang }: SearchDialogProps) {
             placeholder={lang === "ar" ? "ابحث عن خدمة، طبيب، فيديو..." : "Search services, doctors, videos..."}
             className="flex-1 bg-transparent text-sm focus:outline-none"
           />
-          <button onClick={onClose} aria-label="Close" className="text-brand-500 hover:text-brand-800">
+          <button onClick={onClose} aria-label="Close" className="text-ink-muted hover:text-ink-secondary">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <div className="mt-2 max-h-80 overflow-y-auto">
           {loading && (
-            <p className="py-6 text-center text-sm text-brand-500">
+            <p className="py-6 text-center text-sm text-ink-muted">
               {lang === "ar" ? "جارٍ البحث..." : "Searching..."}
             </p>
           )}
           {!loading && query.length >= 2 && results.length === 0 && (
-            <p className="py-6 text-center text-sm text-brand-500">
+            <p className="py-6 text-center text-sm text-ink-muted">
               {lang === "ar" ? "لا توجد نتائج" : "No results found"}
             </p>
           )}
@@ -105,7 +105,7 @@ export function SearchDialog({ open, onClose, lang }: SearchDialogProps) {
               </span>
               <div className="min-w-0">
                 <div className="truncate text-sm font-medium text-brand-950">{r.title}</div>
-                {r.subtitle && <div className="truncate text-xs text-brand-500">{r.subtitle}</div>}
+                {r.subtitle && <div className="truncate text-xs text-ink-muted">{r.subtitle}</div>}
               </div>
             </Link>
           ))}

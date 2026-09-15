@@ -178,7 +178,7 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
     <div className="flex items-end pb-2">
       <label className="flex items-center gap-3 rounded-xl border border-brand-950/15 px-4 py-2.5">
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
-        <span className="text-sm font-medium text-brand-800">{label}</span>
+        <span className="text-sm font-medium text-ink-secondary">{label}</span>
       </label>
     </div>
   );

@@ -110,9 +110,9 @@ export function UsersManager() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-b border-brand-950/5">
-                <td className="px-4 py-3 text-brand-800" dir="ltr">{u.email}</td>
-                <td className="px-4 py-3 text-brand-800">{u.full_name ?? "—"}</td>
-                <td className="px-4 py-3 text-brand-800">
+                <td className="px-4 py-3 text-ink-secondary" dir="ltr">{u.email}</td>
+                <td className="px-4 py-3 text-ink-secondary">{u.full_name ?? "—"}</td>
+                <td className="px-4 py-3 text-ink-secondary">
                   {u.is_super_admin
                     ? "مدير عام"
                     : u.user_roles.map((r) => roles.find((x) => x.id === r.role_id)?.name ?? "؟").join("، ") || "—"}
@@ -134,7 +134,7 @@ export function UsersManager() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6" dir="rtl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-bold text-brand-950">إضافة مستخدم</h2>
-              <button onClick={() => setModal(null)}><X className="h-5 w-5 text-brand-500" /></button>
+              <button onClick={() => setModal(null)}><X className="h-5 w-5 text-ink-muted" /></button>
             </div>
             <form onSubmit={create} className="space-y-4">
               <div><label className="label">البريد الإلكتروني</label><input className="input" dir="ltr" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
@@ -166,7 +166,7 @@ export function UsersManager() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6" dir="rtl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-bold text-brand-950">تعديل المستخدم</h2>
-              <button onClick={() => setEditing(null)}><X className="h-5 w-5 text-brand-500" /></button>
+              <button onClick={() => setEditing(null)}><X className="h-5 w-5 text-ink-muted" /></button>
             </div>
             <div className="space-y-4">
               <div><label className="label">الاسم الكامل</label><input className="input" value={editing.full_name ?? ""} onChange={(e) => setEditing({ ...editing, full_name: e.target.value })} /></div>

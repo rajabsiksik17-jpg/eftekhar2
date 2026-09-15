@@ -6,8 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { Lang } from "@/lib/i18n";
 import type { NavigationItem } from "@/lib/types";
-import { ChevronDown, Menu, Phone, Search, X, Globe } from "lucide-react";
-import { SearchDialog } from "@/components/search/SearchDialog";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 interface HeaderProps {
   lang: Lang;
@@ -46,7 +45,6 @@ export function Header(props: HeaderProps) {
 
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [openKey, setOpenKey] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
@@ -188,7 +186,7 @@ export function Header(props: HeaderProps) {
                       <Link
                         key={c.key}
                         href={c.url}
-                        className="block rounded-xl px-3 py-2 text-sm text-brand-800 transition hover:bg-brand-50 hover:text-brand-700"
+                        className="block rounded-xl px-3 py-2 text-sm text-ink-secondary transition hover:bg-brand-50 hover:text-brand-700"
                       >
                         {c.label}
                       </Link>
@@ -201,32 +199,13 @@ export function Header(props: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-2">
-          {showPhone && phone && (
-            <a
-              href={`tel:${phone.replace(/\s/g, "")}`}
-              className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50 xl:flex"
-            >
-              <Phone className="h-4 w-4" />
-              <span className="phone-ltr">{phone}</span>
-            </a>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setSearchOpen(true)}
-            aria-label="Search"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-brand-700 hover:bg-brand-50"
-          >
-            <Search className="h-5 w-5" />
-          </button>
-
           {showLangSwitcher && (
             <Link
               href={switchHref()}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-brand-700 hover:bg-brand-50"
+              className="rounded-full px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50"
               aria-label={otherLang === "ar" ? "العربية" : "English"}
             >
-              <Globe className="h-5 w-5" />
+              {otherLang === "ar" ? "العربية" : "English"}
             </Link>
           )}
 
@@ -272,7 +251,7 @@ export function Header(props: HeaderProps) {
                     aria-expanded={expanded}
                   >
                     {localized(item)}
-                    <ChevronDown className={cn("h-4 w-4 text-brand-500 transition-transform", expanded && "rotate-180")} />
+                    <ChevronDown className={cn("h-4 w-4 text-ink-muted transition-transform", expanded && "rotate-180")} />
                   </button>
                   {expanded && (
                     <div className="pb-2 ps-3">
@@ -290,23 +269,12 @@ export function Header(props: HeaderProps) {
                 </div>
               );
             })}
-            {showPhone && phone && (
-              <a
-                href={`tel:${phone.replace(/\s/g, "")}`}
-                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-brand-700"
-              >
-                <Phone className="h-4 w-4" />
-                <span className="phone-ltr">{phone}</span>
-              </a>
-            )}
             <Link href={href(ctaUrl)} className="btn-primary btn-md mt-2">
               {ctaText}
             </Link>
           </nav>
         </div>
       )}
-
-      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} lang={lang} />
     </header>
   );
 }

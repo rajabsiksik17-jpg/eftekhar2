@@ -9,7 +9,8 @@ export type FieldType =
   | "image"
   | "date"
   | "url"
-  | "json";
+  | "json"
+  | "icon";
 
 export interface Field {
   name: string;
@@ -42,10 +43,8 @@ export interface EntitySchema {
 
 const iconField = (label = "الأيقونة"): Field => ({
   name: "icon",
-  type: "select",
+  type: "icon",
   label,
-  dir: "ltr",
-  options: ICON_NAMES.map((n) => ({ value: n, label: n })),
 });
 
 const seoFields: Field[] = [
@@ -79,7 +78,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "category_id", type: "text", label: "معرّف التصنيف (UUID)", help: "اختر التصنيف من صفحة التصنيفات وانسخ المعرّف هنا." },
       { name: "description_ar", type: "textarea", label: "الوصف (عربي)", rows: 4 },
       { name: "description_en", type: "textarea", label: "الوصف (إنجليزي)", rows: 4 },
-      { name: "icon", type: "select", label: "الأيقونة", dir: "ltr", options: ICON_NAMES.map((n) => ({ value: n, label: n })) },
+      { name: "icon", type: "icon", label: "الأيقونة" },
       { name: "image", type: "image", label: "الصورة" },
       { name: "is_featured", type: "boolean", label: "مميز" },
       { name: "display_order", type: "number", label: "الترتيب" },

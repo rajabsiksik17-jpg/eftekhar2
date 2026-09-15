@@ -25,8 +25,12 @@ function LoginForm() {
       });
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.message ?? "error");
-      setStep("otp");
-      toast.success("تم إرسال رمز التحقق إلى بريدك الإلكتروني");
+      if (json.data?.needs_otp) {
+        setStep("otp");
+        toast.success("تم إرسال رمز التحقق إلى بريدك الإلكتروني");
+      } else {
+        router.replace("/admin/dashboard");
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "حدث خطأ");
     } finally {
@@ -61,7 +65,7 @@ function LoginForm() {
             اف
           </span>
           <h1 className="mt-4 text-xl font-bold text-brand-950">عيادات افتخار للخدمات العلاجية</h1>
-          <p className="text-sm text-brand-500">تسجيل دخول الإدارة</p>
+          <p className="text-sm text-ink-muted">تسجيل دخول الإدارة</p>
         </div>
 
         {step === "credentials" ? (

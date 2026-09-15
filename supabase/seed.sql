@@ -466,7 +466,7 @@ begin
     'شاهد المزيد عن خدماتنا',
     'See More About Our Services',
     null, null,
-    '{"video":{"youtube_url":"","thumbnail":"","autoplay":false,"muted":true,"loop":false,"controls":true,"overlay":true,"modal":true},"bullets":[{"icon":"Check","ar":"فريق طبي متخصص","en":"Specialized medical team"},{"icon":"Check","ar":"بيئة طبية آمنة","en":"Safe medical environment"},{"icon":"Check","ar":"متابعة مستمرة","en":"Continuous follow-up"}],"cta":{"label_ar":"احجز موعد","label_en":"Book Appointment","url":"/appointment"}}'::jsonb, 4),
+    '{"ar":{"text":"نقدم لكم لمحة عن خدماتنا وطريقة عملنا في عيادات افتخار، حيث نجمع بين الخبرة الطبية والتقنيات الحديثة لتقديم تجربة علاجية متكاملة."},"en":{"text":"A glimpse into our services and how we work at Eftekar Clinics, where medical expertise meets modern technology for a complete care experience."},"video":{"youtube_url":"","thumbnail":"","autoplay":false,"muted":true,"loop":false,"controls":true,"overlay":true,"modal":true},"features":[{"icon":"Stethoscope","ar":"فريق طبي متخصص","en":"Specialized Medical Team"},{"icon":"Cpu","ar":"تقنيات حديثة","en":"Modern Technology"},{"icon":"HeartHandshake","ar":"رعاية متكاملة","en":"Integrated Patient Care"},{"icon":"ShieldCheck","ar":"خصوصية وأمان","en":"Privacy & Safety"}],"cta":{"label_ar":"احجز موعد","label_en":"Book Appointment","url":"/appointment"}}'::jsonb, 4),
   (home_id, 'service_categories',
     'تخصصاتنا الطبية',
     'Our Medical Specialties',
@@ -518,7 +518,13 @@ begin
   (about_id, 'text', 'رؤيتنا', 'Our Vision', null, null,
     '{"ar":{"text":"أن نكون من الوجهات الطبية الموثوقة في تقديم الخدمات العلاجية والتجميلية المتخصصة، مع الاستمرار في تطوير مستوى الرعاية والتقنيات والخدمات."},"en":{"text":"To be one of the trusted medical destinations for specialized therapeutic and cosmetic services, while continuing to develop the level of care, technologies and services."},"icon":"Target"}'::jsonb, 2),
   (about_id, 'text', 'رسالتنا', 'Our Mission', null, null,
-    '{"ar":{"text":"تقديم رعاية طبية تضع المريض في مقدمة الاهتمام، وتجمع بين الخبرة الطبية والتكنولوجيا الحديثة والخصوصية والاهتمام الإنساني."},"en":{"text":"To provide medical care that puts the patient first, combining medical expertise, modern technology, privacy and human attention."},"icon":"HeartHandshake"}'::jsonb, 3)
+    '{"ar":{"text":"تقديم رعاية طبية تضع المريض في مقدمة الاهتمام، وتجمع بين الخبرة الطبية والتكنولوجيا الحديثة والخصوصية والاهتمام الإنساني."},"en":{"text":"To provide medical care that puts the patient first, combining medical expertise, modern technology, privacy and human attention."},"icon":"HeartHandshake"}'::jsonb, 3),
+  (about_id, 'image_text', 'رعاية تليق بكم', 'Care That Suits You', null, null,
+    '{"ar":{"text":"نؤمن في عيادات افتخار أن الرعاية الطبية تجربة متكاملة تبدأ من الاستماع والتقييم الدقيق، وتمتد إلى المتابعة والاهتمام بكل التفاصيل."},"en":{"text":"At Eftekar Clinics we believe medical care is a complete experience that starts with listening and careful assessment, and extends to follow-up and attention to every detail."},"image":"","buttons":[]}'::jsonb,
+    '{"layout":"image_left"}'::jsonb, 10),
+  (about_id, 'image_text', 'تقنيات حديثة لنتائج أفضل', 'Modern Technology for Better Results', null, null,
+    '{"ar":{"text":"نعتمد على أحدث التقنيات والأجهزة المتاحة وفق طبيعة كل خدمة، مع فريق متخصص يعمل وفق أعلى معايير السلامة والجودة."},"en":{"text":"We rely on the latest technologies and equipment according to each service, with a specialized team working to the highest standards of safety and quality."},"image":"","buttons":[]}'::jsonb,
+    '{"layout":"image_right"}'::jsonb, 11)
   on conflict do nothing;
 end $$;
 

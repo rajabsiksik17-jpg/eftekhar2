@@ -9,7 +9,7 @@ export default async function IntegrationsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-brand-950">التكاملات</h1>
-        <p className="text-sm text-brand-500">Google Analytics و Search Console</p>
+        <p className="text-sm text-ink-muted">Google Analytics و Search Console</p>
       </div>
       <IntegrationsForm />
     </div>

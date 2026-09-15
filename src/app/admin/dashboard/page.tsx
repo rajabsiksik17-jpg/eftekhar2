@@ -87,7 +87,7 @@ export default async function DashboardPage() {
             </span>
             <div>
               <div className="text-2xl font-bold text-brand-950">{c.value}</div>
-              <div className="text-sm text-brand-500">{c.label}</div>
+              <div className="text-sm text-ink-muted">{c.label}</div>
             </div>
           </div>
         ))}
