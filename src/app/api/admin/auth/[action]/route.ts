@@ -3,13 +3,23 @@ import { cookies } from "next/headers";
 import { createServerClientBound, createServiceClient } from "@/lib/supabase/client";
 import { jsonOk, jsonError, ApiError, rateLimit } from "@/lib/api";
 import { loginSchema, otpVerifySchema } from "@/lib/validation";
-import { encrypt, generateOtp, hashToken } from "@/lib/encryption";
+import { generateOtp, hashToken, randomToken } from "@/lib/encryption";
 import { sendMail } from "@/lib/email";
-import { getVerifiedSessionCookieName, parseUserAgent, getUserPermissions, getProfile, logAudit } from "@/lib/auth";
+import {
+  getVerifiedSessionCookieName,
+  getTrustCookieName,
+  parseUserAgent,
+  getUserPermissions,
+  getProfile,
+  logAudit,
+  isEmailReady,
+} from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 const SESSION_COOKIE = getVerifiedSessionCookieName();
+const TRUST_COOKIE = getTrustCookieName();
 const OTP_TTL_MS = 10 * 60 * 1000;
+const TRUST_TTL_DAYS = 30;
 
 async function handle(action: string, req: NextRequest) {
   if (action === "login") return login(req);
@@ -18,6 +28,49 @@ async function handle(action: string, req: NextRequest) {
   if (action === "me") return me();
   if (action === "sessions") return sessions(req);
   throw new ApiError(404, "not_found");
+}
+
+async function createVerifiedSession(userId: string, req: NextRequest, trustTokenHash?: string) {
+  const service = createServiceClient();
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+  const ua = req.headers.get("user-agent") ?? null;
+  const uaInfo = parseUserAgent(ua);
+  const { data: session } = await service
+    .from("sessions")
+    .insert({
+      user_id: userId,
+      ip,
+      user_agent: ua,
+      device: uaInfo.device,
+      browser: uaInfo.browser,
+      os: uaInfo.os,
+      otp_verified: true,
+      trust_token: trustTokenHash ?? null,
+    })
+    .select()
+    .single();
+  return session;
+}
+
+function verifiedResponse(sessionId: string, trustToken?: string) {
+  const res = NextResponse.json({ ok: true, data: { verified: true } });
+  res.cookies.set(SESSION_COOKIE, sessionId, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+  if (trustToken) {
+    res.cookies.set(TRUST_COOKIE, trustToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * TRUST_TTL_DAYS,
+    });
+  }
+  return res;
 }
 
 async function login(req: NextRequest) {
@@ -55,7 +108,39 @@ async function login(req: NextRequest) {
   }
 
   const service = createServiceClient();
-  // invalidate previous unused OTPs
+
+  // Smart OTP: trusted device (valid trust cookie) OR email not ready -> skip OTP.
+  const cookieStore = await cookies();
+  const trustCookie = cookieStore.get(TRUST_COOKIE)?.value;
+  let trusted = false;
+  if (trustCookie) {
+    const trustHash = hashToken(trustCookie);
+    const { data: trustedSession } = await service
+      .from("sessions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("trust_token", trustHash)
+      .eq("otp_verified", true)
+      .is("revoked_at", null)
+      .limit(1)
+      .maybeSingle();
+    trusted = Boolean(trustedSession);
+  }
+
+  const emailReady = await isEmailReady();
+
+  if (trusted || !emailReady) {
+    const session = await createVerifiedSession(user.id, req, trusted ? hashToken(trustCookie!) : undefined);
+    await logAudit({
+      userId: user.id,
+      action: trusted ? "login.trusted_device" : "login.otp_bypassed_email_not_ready",
+      entity: "session",
+      entityId: session?.id as string,
+    });
+    return verifiedResponse(session!.id as string, trusted ? trustCookie! : undefined);
+  }
+
+  // Email is ready and device is not trusted -> require OTP.
   await service.from("otp_codes").update({ consumed_at: new Date().toISOString() }).eq("user_id", user.id).is("consumed_at", null);
 
   const otp = generateOtp();
@@ -68,7 +153,6 @@ async function login(req: NextRequest) {
     max_attempts: 5,
   });
 
-  const siteName = process.env.NEXT_PUBLIC_SITE_URL ?? "Eftekar Clinics";
   const mail = await sendMail({
     to: user.email!,
     subject: "Your login code - Eftekar Admin",
@@ -128,36 +212,14 @@ async function verifyOtp(req: NextRequest) {
 
   await service.from("otp_codes").update({ consumed_at: new Date().toISOString() }).eq("id", code.id);
 
-  const headersList = req.headers;
-  const ipAddr = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
-  const ua = headersList.get("user-agent") ?? null;
-  const uaInfo = parseUserAgent(ua);
-
-  const { data: session } = await service
-    .from("sessions")
-    .insert({
-      user_id: user.id,
-      ip: ipAddr,
-      user_agent: ua,
-      device: uaInfo.device,
-      browser: uaInfo.browser,
-      os: uaInfo.os,
-      otp_verified: true,
-    })
-    .select()
-    .single();
+  // Generate a trusted-device token so this device is remembered.
+  const trustToken = randomToken();
+  const trustHash = hashToken(trustToken);
+  const session = await createVerifiedSession(user.id, req, trustHash);
 
   await logAudit({ userId: user.id, action: "login.success", entity: "session", entityId: session?.id as string });
 
-  const res = NextResponse.json({ ok: true, data: { verified: true } });
-  res.cookies.set(SESSION_COOKIE, session!.id as string, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
-  return res;
+  return verifiedResponse(session!.id as string, trustToken);
 }
 
 async function logout() {

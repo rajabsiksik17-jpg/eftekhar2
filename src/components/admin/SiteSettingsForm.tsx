@@ -37,6 +37,10 @@ export function SiteSettingsForm() {
   const setFloating = (key: string, value: unknown) => setSite("floating", { ...floating, [key]: value });
   const appointment = (data.site.appointment ?? {}) as Record<string, unknown>;
   const setAppt = (key: string, value: unknown) => setSite("appointment", { ...appointment, [key]: value });
+  const appearance = (data.site.appearance ?? {}) as Record<string, unknown>;
+  const setAppearance = (key: string, value: unknown) => setSite("appearance", { ...appearance, [key]: value });
+  const analytics = (data.site.analytics ?? {}) as Record<string, unknown>;
+  const setAnalytics = (key: string, value: unknown) => setSite("analytics", { ...analytics, [key]: value });
 
   const save = async () => {
     setSaving(true);
@@ -102,6 +106,22 @@ export function SiteSettingsForm() {
         </Grid>
       </Section>
 
+      <Section title="المظهر / الهوية البصرية">
+        <Grid>
+          <ColorField label="اللون الأساسي" value={s(appearance.primary)} onChange={(v) => setAppearance("primary", v)} />
+          <ColorField label="اللون الثانوي" value={s(appearance.secondary)} onChange={(v) => setAppearance("secondary", v)} />
+          <ColorField label="لون التمييز (Accent)" value={s(appearance.accent)} onChange={(v) => setAppearance("accent", v)} />
+          <Field label="الأيقونة (Favicon URL)"><input className="input" dir="ltr" value={s(appearance.favicon)} onChange={(e) => setAppearance("favicon", e.target.value)} /></Field>
+        </Grid>
+      </Section>
+
+      <Section title="Google Analytics">
+        <Grid>
+          <Toggle label="تفعيل Google Analytics" checked={Boolean(analytics.ga4_enabled)} onChange={(v) => setAnalytics("ga4_enabled", v)} />
+          <Field label="Measurement ID"><input className="input" dir="ltr" value={s(analytics.ga4_id)} onChange={(e) => setAnalytics("ga4_id", e.target.value)} placeholder="G-XXXXXXXXXX" /></Field>
+        </Grid>
+      </Section>
+
       <Section title="معلومات التواصل">
         <Grid>
           <Field label="الهاتف"><input className="input" dir="ltr" value={s(data.contact?.phone)} onChange={(e) => setContact("phone", e.target.value)} /></Field>
@@ -160,6 +180,23 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
         <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
         <span className="text-sm font-medium text-brand-800">{label}</span>
       </label>
+    </div>
+  );
+}
+
+function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div>
+      <label className="label">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={/^#[0-9a-fA-F]{6}$/.test(value) ? value : "#2563eb"}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-12 cursor-pointer rounded-lg border border-brand-950/15 bg-white p-1"
+        />
+        <input className="input" dir="ltr" value={value} onChange={(e) => onChange(e.target.value)} />
+      </div>
     </div>
   );
 }

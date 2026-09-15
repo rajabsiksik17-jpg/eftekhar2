@@ -566,9 +566,15 @@ insert into public.navigation_items (label_ar, label_en, url, display_order) val
   ('من نحن','About Us','/about',2),
   ('الأطباء','Doctors','/doctors',3),
   ('الخدمات','Services','/services',4),
-  ('معرض الفيديوهات','Videos','/videos',5),
-  ('معرض الصور','Gallery','/gallery',6),
-  ('تواصل معنا','Contact Us','/contact',7)
+  ('تواصل معنا','Contact Us','/contact',5)
+on conflict do nothing;
+
+insert into public.navigation_items (label_ar, label_en, url, parent_id, display_order)
+select 'معرض الفيديوهات','Videos','/videos', id, 1 from public.navigation_items where url = '/about'
+on conflict do nothing;
+
+insert into public.navigation_items (label_ar, label_en, url, parent_id, display_order)
+select 'معرض الصور','Gallery','/gallery', id, 2 from public.navigation_items where url = '/about'
 on conflict do nothing;
 
 -- ------------------------------------------------------------

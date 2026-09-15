@@ -41,7 +41,7 @@ export function FloatingActions(props: FloatingActionsProps) {
   const activeSocial = social.filter((s) => s.url);
 
   return (
-    <div className="fixed bottom-5 z-40 flex flex-col items-end gap-3 end-5" dir="ltr">
+    <div className="fixed bottom-5 z-40 flex flex-col items-end gap-3 end-5">
       {socialOpen && (
         <div className="flex flex-col gap-2">
           {activeSocial.map((s) => {

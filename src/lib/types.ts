@@ -400,6 +400,10 @@ export interface EmailSettings {
   imap_username: string | null;
   imap_password_enc: string | null;
   imap_encryption: string | null;
+  smtp_enabled: boolean;
+  imap_enabled: boolean;
+  smtp_status: string | null;
+  imap_status: string | null;
   updated_at: string;
 }
 

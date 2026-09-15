@@ -2,12 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { Analytics } from "@/components/analytics/Analytics";
+import { getAppearance } from "@/lib/theme";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#276d71",
+  themeColor: "#2563eb",
 };
 
 export const metadata: Metadata = {
@@ -24,11 +25,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = headersList.get("x-lang") === "en" ? "en" : "ar";
   const dir = lang === "ar" ? "rtl" : "ltr";
 
+  const appearance = await getAppearance();
+
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         {children}
-        <Analytics />
+        <ThemeProvider appearance={appearance} />
         <Toaster
           position="top-center"
           dir={dir}

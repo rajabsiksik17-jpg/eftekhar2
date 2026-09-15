@@ -13,9 +13,12 @@ const SITE_KEYS = [
   "tagline_ar",
   "tagline_en",
   "logo_url",
+  "favicon",
   "header",
   "floating",
   "appointment",
+  "appearance",
+  "analytics",
 ];
 
 export async function GET() {

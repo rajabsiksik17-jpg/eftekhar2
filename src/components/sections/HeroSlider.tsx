@@ -146,17 +146,17 @@ export function HeroSlider({ slides, lang }: { slides: HeroSlide[]; lang: Lang }
             type="button"
             onClick={() => go(index - 1)}
             aria-label={lang === "ar" ? "السابق" : "Previous"}
-            className="absolute top-1/2 left-4 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:flex"
+            className="absolute top-1/2 start-4 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:flex"
           >
-            <ChevronLeft className="h-6 w-6" />
+            {lang === "ar" ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
           </button>
           <button
             type="button"
             onClick={() => go(index + 1)}
             aria-label={lang === "ar" ? "التالي" : "Next"}
-            className="absolute top-1/2 right-4 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:flex"
+            className="absolute top-1/2 end-4 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 md:flex"
           >
-            <ChevronRight className="h-6 w-6" />
+            {lang === "ar" ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
           </button>
           <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
             {slides.map((_, i) => (

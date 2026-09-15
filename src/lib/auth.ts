@@ -146,6 +146,26 @@ export function getVerifiedSessionCookieName() {
   return VERIFIED_SESSION_COOKIE;
 }
 
+export function getTrustCookieName() {
+  return "eftekar_trust";
+}
+
+/**
+ * Email OTP is only considered "ready" when SMTP is configured, enabled and
+ * the connection was tested successfully.
+ */
+export async function isEmailReady(): Promise<boolean> {
+  const service = createServiceClient();
+  const { data } = await service
+    .from("email_settings")
+    .select("smtp_host, smtp_username, smtp_enabled, smtp_status")
+    .eq("id", 1)
+    .maybeSingle();
+  return Boolean(
+    data?.smtp_host && data?.smtp_username && data?.smtp_enabled && data?.smtp_status === "ok",
+  );
+}
+
 export function parseUserAgent(ua: string | null | undefined) {
   const value = ua ?? "";
   const browser = /Edg\//.test(value)

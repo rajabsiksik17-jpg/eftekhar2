@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,12 @@ interface HeaderProps {
   categories: { slug: string; name_ar: string; name_en: string }[];
 }
 
+interface ChildLink {
+  key: string;
+  label: string;
+  url: string;
+}
+
 export function Header(props: HeaderProps) {
   const {
     lang,
@@ -42,7 +48,9 @@ export function Header(props: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -53,7 +61,8 @@ export function Header(props: HeaderProps) {
 
   useEffect(() => {
     setMobileOpen(false);
-    setServicesOpen(false);
+    setOpenKey(null);
+    setMobileExpanded(null);
   }, [pathname]);
 
   const href = (url: string) => {
@@ -68,10 +77,46 @@ export function Header(props: HeaderProps) {
     return `/${otherLang}${path || ""}`;
   };
 
+  const localized = (item: NavigationItem) => (lang === "ar" ? item.label_ar : item.label_en);
+
+  // Build the tree: top-level items with their children (via parent_id).
+  const childrenOf = new Map<string, NavigationItem[]>();
+  for (const item of nav) {
+    if (item.parent_id) {
+      const list = childrenOf.get(item.parent_id) ?? [];
+      list.push(item);
+      childrenOf.set(item.parent_id, list);
+    }
+  }
+  const topLevel = nav.filter((i) => !i.parent_id).sort((a, b) => a.display_order - b.display_order);
+
   const isServices = (item: NavigationItem) =>
     item.url === "/services" && autoServicesDropdown && categories.length > 0;
 
-  const localized = (item: NavigationItem) => (lang === "ar" ? item.label_ar : item.label_en);
+  const getChildren = (item: NavigationItem): ChildLink[] | null => {
+    if (isServices(item)) {
+      return categories.map((c) => ({
+        key: `cat-${c.slug}`,
+        label: lang === "ar" ? c.name_ar : c.name_en,
+        url: `/${lang}/services/${c.slug}`,
+      }));
+    }
+    const kids = childrenOf.get(item.id) ?? [];
+    if (kids.length === 0) return null;
+    return [
+      { key: "self", label: localized(item), url: href(item.url) },
+      ...kids.map((k) => ({ key: k.id, label: localized(k), url: href(k.url) })),
+    ];
+  };
+
+  const openDropdown = (key: string | null) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpenKey(key);
+  };
+  const scheduleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpenKey(null), 140);
+  };
 
   return (
     <header
@@ -98,45 +143,61 @@ export function Header(props: HeaderProps) {
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
-          {nav.map((item) =>
-            isServices(item) ? (
+          {topLevel.map((item) => {
+            const children = getChildren(item);
+            if (!children) {
+              return (
+                <Link
+                  key={item.id}
+                  href={href(item.url)}
+                  className="rounded-full px-3 py-2 text-sm font-medium text-brand-900 hover:bg-brand-50 hover:text-brand-700"
+                >
+                  {localized(item)}
+                </Link>
+              );
+            }
+            return (
               <div
                 key={item.id}
                 className="relative"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
+                onMouseEnter={() => openDropdown(item.id)}
+                onMouseLeave={scheduleClose}
               >
                 <Link
                   href={href(item.url)}
-                  className="flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-brand-900 hover:bg-brand-50 hover:text-brand-700"
+                  className={cn(
+                    "flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium text-brand-900 hover:bg-brand-50 hover:text-brand-700",
+                    openKey === item.id && "bg-brand-50 text-brand-700",
+                  )}
+                  aria-expanded={openKey === item.id}
                 >
                   {localized(item)}
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown
+                    className={cn("h-4 w-4 transition-transform duration-200", openKey === item.id && "rotate-180")}
+                  />
                 </Link>
-                {servicesOpen && (
-                  <div className="absolute top-full mt-1 w-64 rounded-2xl border border-brand-950/10 bg-white p-2 shadow-soft">
-                    {categories.map((c) => (
+                {/* hover bridge removes the gap so the menu never closes on the way down */}
+                <div
+                  className={cn(
+                    "absolute start-0 top-full pt-2 transition-all duration-200",
+                    openKey === item.id ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-1 opacity-0",
+                  )}
+                >
+                  <div className="w-64 overflow-hidden rounded-2xl border border-brand-950/10 bg-white p-2 shadow-soft">
+                    {children.map((c) => (
                       <Link
-                        key={c.slug}
-                        href={`/${lang}/services/${c.slug}`}
-                        className="block rounded-xl px-3 py-2 text-sm text-brand-800 hover:bg-brand-50"
+                        key={c.key}
+                        href={c.url}
+                        className="block rounded-xl px-3 py-2 text-sm text-brand-800 transition hover:bg-brand-50 hover:text-brand-700"
                       >
-                        {lang === "ar" ? c.name_ar : c.name_en}
+                        {c.label}
                       </Link>
                     ))}
                   </div>
-                )}
+                </div>
               </div>
-            ) : (
-              <Link
-                key={item.id}
-                href={href(item.url)}
-                className="rounded-full px-3 py-2 text-sm font-medium text-brand-900 hover:bg-brand-50 hover:text-brand-700"
-              >
-                {localized(item)}
-              </Link>
-            ),
-          )}
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -144,10 +205,9 @@ export function Header(props: HeaderProps) {
             <a
               href={`tel:${phone.replace(/\s/g, "")}`}
               className="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-50 xl:flex"
-              dir="ltr"
             >
               <Phone className="h-4 w-4" />
-              {phone}
+              <span className="phone-ltr">{phone}</span>
             </a>
           )}
 
@@ -179,6 +239,7 @@ export function Header(props: HeaderProps) {
             className="flex h-10 w-10 items-center justify-center rounded-full text-brand-900 hover:bg-brand-50 lg:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -186,25 +247,56 @@ export function Header(props: HeaderProps) {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-brand-950/10 bg-white lg:hidden">
-          <nav className="container-px flex flex-col gap-1 py-4">
-            {nav.map((item) => (
-              <Link
-                key={item.id}
-                href={href(item.url)}
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-brand-900 hover:bg-brand-50"
-              >
-                {localized(item)}
-              </Link>
-            ))}
+        <div className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-brand-950/10 bg-white lg:hidden">
+          <nav className="container-px flex flex-col py-3">
+            {topLevel.map((item) => {
+              const children = getChildren(item);
+              if (!children) {
+                return (
+                  <Link
+                    key={item.id}
+                    href={href(item.url)}
+                    className="rounded-xl px-3 py-3 text-sm font-medium text-brand-900 hover:bg-brand-50"
+                  >
+                    {localized(item)}
+                  </Link>
+                );
+              }
+              const expanded = mobileExpanded === item.id;
+              return (
+                <div key={item.id} className="border-b border-brand-950/5 last:border-0">
+                  <button
+                    type="button"
+                    onClick={() => setMobileExpanded(expanded ? null : item.id)}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-brand-900 hover:bg-brand-50"
+                    aria-expanded={expanded}
+                  >
+                    {localized(item)}
+                    <ChevronDown className={cn("h-4 w-4 text-brand-500 transition-transform", expanded && "rotate-180")} />
+                  </button>
+                  {expanded && (
+                    <div className="pb-2 ps-3">
+                      {children.map((c) => (
+                        <Link
+                          key={c.key}
+                          href={c.url}
+                          className="block rounded-xl px-3 py-2.5 text-sm text-brand-700 hover:bg-brand-50"
+                        >
+                          {c.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             {showPhone && phone && (
               <a
                 href={`tel:${phone.replace(/\s/g, "")}`}
                 className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-brand-700"
-                dir="ltr"
               >
                 <Phone className="h-4 w-4" />
-                {phone}
+                <span className="phone-ltr">{phone}</span>
               </a>
             )}
             <Link href={href(ctaUrl)} className="btn-primary btn-md mt-2">

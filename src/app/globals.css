@@ -3,7 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Segoe UI", "Tajawal", "Noto Sans Arabic", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Cairo", "Segoe UI", "Tajawal", "Noto Sans Arabic", "Helvetica Neue", Arial, sans-serif;
+
+  /* Brand (primary) — light medical blue (RGB triplets for <alpha-value>) */
+  --brand-50: 239 246 255;
+  --brand-100: 219 234 254;
+  --brand-200: 191 219 254;
+  --brand-300: 147 197 253;
+  --brand-400: 96 165 250;
+  --brand-500: 59 130 246;
+  --brand-600: 37 99 235;
+  --brand-700: 29 78 216;
+  --brand-800: 30 64 175;
+  --brand-900: 30 58 138;
+  --brand-950: 23 37 84;
+
+  /* Accent — soft teal */
+  --accent-50: 240 253 250;
+  --accent-100: 204 251 241;
+  --accent-200: 153 246 228;
+  --accent-300: 94 234 212;
+  --accent-400: 45 212 191;
+  --accent-500: 20 184 166;
+  --accent-600: 13 148 136;
+  --accent-700: 15 118 110;
+  --accent-800: 17 94 89;
+  --accent-900: 19 78 74;
+
+  /* Secondary — calm sky */
+  --secondary-50: 240 249 255;
+  --secondary-100: 224 242 254;
+  --secondary-200: 186 230 253;
+  --secondary-300: 125 211 252;
+  --secondary-400: 56 189 248;
+  --secondary-500: 14 165 233;
+  --secondary-600: 2 132 199;
+  --secondary-700: 3 105 161;
+  --secondary-800: 7 89 133;
+  --secondary-900: 12 74 110;
 }
 
 html {
@@ -20,6 +57,20 @@ body {
   letter-spacing: 0;
 }
 
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 @layer components {
   .container-px {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
@@ -31,8 +82,8 @@ body {
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500 shadow-soft;
   }
-  .btn-gold {
-    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-gold-500 text-white hover:bg-gold-600 focus-visible:ring-gold-400 shadow-soft;
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-accent-500 text-white hover:bg-accent-600 focus-visible:ring-accent-400 shadow-soft;
   }
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-brand-200 bg-white/80 text-brand-700 hover:bg-brand-50 focus-visible:ring-brand-400;
@@ -67,6 +118,12 @@ body {
   .section-subtitle {
     @apply mt-3 text-base text-brand-700/80 sm:text-lg;
   }
+
+  /* Phone number isolation so digits never flip in RTL */
+  .phone-ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
 }
 
 /* Lightbox / modal backdrop helpers */
@@ -89,11 +146,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5d1;
+  background: #cbd5e1;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a3b0ab;
+  background: #94a3b8;
 }
 
 @keyframes marquee {
@@ -103,4 +160,19 @@ body {
   to {
     transform: translateX(-50%);
   }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
 }

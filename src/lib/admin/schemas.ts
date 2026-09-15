@@ -1,3 +1,5 @@
+import { ICON_NAMES } from "@/components/icons";
+
 export type FieldType =
   | "text"
   | "textarea"
@@ -38,6 +40,14 @@ export interface EntitySchema {
   listPageSize?: number;
 }
 
+const iconField = (label = "الأيقونة"): Field => ({
+  name: "icon",
+  type: "select",
+  label,
+  dir: "ltr",
+  options: ICON_NAMES.map((n) => ({ value: n, label: n })),
+});
+
 const seoFields: Field[] = [
   { name: "seo_title_ar", type: "text", label: "عنوان SEO (عربي)", dir: "ltr" },
   { name: "seo_title_en", type: "text", label: "عنوان SEO (إنجليزي)", dir: "ltr" },
@@ -69,7 +79,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "category_id", type: "text", label: "معرّف التصنيف (UUID)", help: "اختر التصنيف من صفحة التصنيفات وانسخ المعرّف هنا." },
       { name: "description_ar", type: "textarea", label: "الوصف (عربي)", rows: 4 },
       { name: "description_en", type: "textarea", label: "الوصف (إنجليزي)", rows: 4 },
-      { name: "icon", type: "text", label: "الأيقونة", dir: "ltr", help: "اسم أيقونة من مكتبة Lucide" },
+      { name: "icon", type: "select", label: "الأيقونة", dir: "ltr", options: ICON_NAMES.map((n) => ({ value: n, label: n })) },
       { name: "image", type: "image", label: "الصورة" },
       { name: "is_featured", type: "boolean", label: "مميز" },
       { name: "display_order", type: "number", label: "الترتيب" },
@@ -97,7 +107,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "description_en", type: "textarea", label: "الوصف (إنجليزي)", rows: 3 },
       { name: "content_ar", type: "textarea", label: "المحتوى (عربي)", rows: 4 },
       { name: "content_en", type: "textarea", label: "المحتوى (إنجليزي)", rows: 4 },
-      { name: "icon", type: "text", label: "الأيقونة", dir: "ltr" },
+      iconField(),
       { name: "cover_image", type: "image", label: "صورة الغلاف" },
       { name: "is_featured", type: "boolean", label: "مميز" },
       { name: "display_order", type: "number", label: "الترتيب" },
@@ -358,6 +368,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
     columns: [
       { key: "label_ar", label: "العنوان" },
       { key: "url", label: "الرابط" },
+      { key: "parent_id", label: "فرعي؟", type: "boolean" },
       { key: "is_active", label: "نشط", type: "boolean" },
       { key: "display_order", label: "الترتيب" },
     ],
@@ -365,6 +376,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "label_ar", type: "text", label: "العنوان (عربي)", required: true },
       { name: "label_en", type: "text", label: "العنوان (إنجليزي)", required: true, dir: "ltr" },
       { name: "url", type: "text", label: "الرابط", required: true, dir: "ltr", help: "مثل /about أو /services أو رابط خارجي كامل." },
+      { name: "parent_id", type: "text", label: "معرّف العنصر الأب (للقوائم الفرعية)", dir: "ltr", help: "اتركه فارغًا ليكون عنصرًا رئيسيًا. ضع معرّف العنصر الأب لعرضه داخل قائمة منسدلة." },
       { name: "is_external", type: "boolean", label: "رابط خارجي" },
       { name: "display_order", type: "number", label: "الترتيب" },
       { name: "is_active", type: "boolean", label: "نشط" },
@@ -478,7 +490,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "number", type: "number", label: "الرقم", required: true },
       { name: "label_ar", type: "text", label: "التسمية (عربي)", required: true },
       { name: "label_en", type: "text", label: "التسمية (إنجليزي)", required: true, dir: "ltr" },
-      { name: "icon", type: "text", label: "الأيقونة", dir: "ltr" },
+      iconField(),
       { name: "prefix", type: "text", label: "البادئة", dir: "ltr" },
       { name: "suffix", type: "text", label: "اللاحقة", dir: "ltr" },
       { name: "display_order", type: "number", label: "الترتيب" },

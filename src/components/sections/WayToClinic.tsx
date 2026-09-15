@@ -48,8 +48,8 @@ export function WayToClinic({
             {localized?.text && <p className="leading-relaxed text-brand-800/90">{localized.text}</p>}
             <div className="mt-6 space-y-3 text-sm text-brand-800">
               {contact?.phone && (
-                <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-center gap-3" dir="ltr">
-                  <Phone className="h-4 w-4 text-brand-600" /> {contact.phone}
+                <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-center gap-3">
+                  <Phone className="h-4 w-4 text-brand-600" /> <span className="phone-ltr">{contact.phone}</span>
                 </a>
               )}
               {contact?.email && (

@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/client";
 import { requireAdmin, logAudit } from "@/lib/auth";
 import { jsonOk, jsonError, ApiError } from "@/lib/api";
 import { encrypt } from "@/lib/encryption";
+import { SETTINGS_TAG } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +44,13 @@ export async function PUT(req: NextRequest) {
         },
         { onConflict: "id" },
       );
+      // Mirror to public site_settings so the frontend injects the GA script.
+      await service
+        .from("site_settings")
+        .upsert(
+          { key: "analytics", value: { ga4_enabled: Boolean(body.ga4.enabled), ga4_id: body.ga4.measurement_id ?? "" } },
+          { onConflict: "key" },
+        );
     }
 
     if (body.searchConsole) {
@@ -58,6 +67,7 @@ export async function PUT(req: NextRequest) {
     }
 
     await logAudit({ userId: admin.user.id, action: "integrations.update" });
+    revalidateTag(SETTINGS_TAG);
     return jsonOk({ ok: true });
   } catch (e) {
     return jsonError(e);

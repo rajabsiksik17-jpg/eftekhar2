@@ -123,9 +123,9 @@ export function Footer(props: FooterProps) {
             {lang === "ar" ? "تواصل معنا" : "Contact Us"}
           </h3>
           {contact?.phone && (
-            <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-start gap-3 text-sm text-brand-100/70" dir="ltr">
+            <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-start gap-3 text-sm text-brand-100/70">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" />
-              {contact.phone}
+              <span className="phone-ltr">{contact.phone}</span>
             </a>
           )}
           {contact?.email && (

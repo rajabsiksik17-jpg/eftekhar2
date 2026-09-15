@@ -129,6 +129,8 @@ const MAP: Record<string, LucideIcon> = {
 
 export type IconName = keyof typeof MAP;
 
+export const ICON_NAMES = Object.keys(MAP) as string[];
+
 export function getIcon(name: string | null | undefined): LucideIcon {
   if (!name) return Sparkles;
   return MAP[name] ?? Sparkles;

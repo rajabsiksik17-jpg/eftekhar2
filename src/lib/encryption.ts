@@ -43,6 +43,10 @@ export function hashToken(value: string): string {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
+export function randomToken(bytes = 32): string {
+  return crypto.randomBytes(bytes).toString("base64url");
+}
+
 export function generateOtp(length = 6): string {
   const digits = "0123456789";
   let out = "";

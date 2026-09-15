@@ -42,7 +42,7 @@ export default async function ContactPage({ params }: Props) {
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white"><Phone className="h-5 w-5" /></span>
                 <div>
                   <div className="text-sm font-bold text-brand-950">{t("الهاتف", "Phone")}</div>
-                  <div className="text-brand-600" dir="ltr">{contact.phone}</div>
+                  <div className="phone-ltr text-brand-600">{contact.phone}</div>
                 </div>
               </a>
             )}
