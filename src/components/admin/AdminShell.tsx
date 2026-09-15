@@ -167,7 +167,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         className={cn(
           "fixed inset-y-0 start-0 z-40 flex flex-col border-e border-brand-950/10 bg-white transition-all",
           collapsed ? "w-[72px]" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0",
         )}
       >
         <div className="flex h-16 items-center gap-2 border-b border-brand-950/10 px-4">

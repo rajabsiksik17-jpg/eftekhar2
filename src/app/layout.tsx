@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { getAppearance } from "@/lib/theme";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { LangDirection } from "@/components/theme/LangDirection";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         {children}
         <ThemeProvider appearance={appearance} />
+        <LangDirection />
         <Toaster
           position="top-center"
           dir={dir}

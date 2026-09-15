@@ -3,7 +3,7 @@ import type { Lang } from "@/lib/i18n";
 import type { PageSection, ContactSettings } from "@/lib/types";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { YouTubeEmbed } from "@/components/ui/YouTubeEmbed";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Video } from "lucide-react";
 
 interface Btn {
   label?: string;
@@ -43,7 +43,16 @@ export function WayToClinic({
       <div className="container-px">
         <SectionHeading title={title} subtitle={subtitle} />
         <div className="grid items-center gap-10 lg:grid-cols-2">
-          <YouTubeEmbed url={video.youtube_url ?? ""} title={title ?? undefined} className="shadow-soft" />
+          {video.youtube_url ? (
+            <YouTubeEmbed url={video.youtube_url} title={title ?? undefined} className="shadow-soft" />
+          ) : (
+            <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-brand-300 bg-brand-50 text-brand-400">
+              <Video className="h-12 w-12" />
+              <p className="text-sm font-medium">
+                {lang === "ar" ? "لا يوجد فيديو حالياً" : "No video available yet"}
+              </p>
+            </div>
+          )}
           <div>
             {localized?.text && <p className="leading-relaxed text-ink-secondary">{localized.text}</p>}
             <div className="mt-6 space-y-3 text-sm text-ink-secondary">
