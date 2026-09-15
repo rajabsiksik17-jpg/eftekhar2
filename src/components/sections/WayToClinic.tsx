@@ -45,8 +45,8 @@ export function WayToClinic({
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <YouTubeEmbed url={video.youtube_url ?? ""} title={title ?? undefined} className="shadow-soft" />
           <div>
-            {localized?.text && <p className="leading-relaxed text-brand-800/90">{localized.text}</p>}
-            <div className="mt-6 space-y-3 text-sm text-brand-800">
+            {localized?.text && <p className="leading-relaxed text-ink-secondary">{localized.text}</p>}
+            <div className="mt-6 space-y-3 text-sm text-ink-secondary">
               {contact?.phone && (
                 <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-brand-600" /> <span className="phone-ltr">{contact.phone}</span>
@@ -66,16 +66,11 @@ export function WayToClinic({
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               {contact?.google_maps_url && (
-                <a href={contact.google_maps_url} target="_blank" rel="noopener noreferrer" className="btn-outline btn-md">
+                <a href={contact.google_maps_url} target="_blank" rel="noopener noreferrer" className="btn-primary btn-md">
                   <MapPin className="h-4 w-4" />
                   {lang === "ar" ? "فتح الموقع على الخريطة" : "Open location on map"}
                 </a>
               )}
-              {buttons.map((b, i) => (
-                <Link key={i} href={href(b.url)} className="btn-primary btn-md">
-                  {b.label}
-                </Link>
-              ))}
             </div>
           </div>
         </div>

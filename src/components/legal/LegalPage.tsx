@@ -16,7 +16,7 @@ export async function LegalPage({ lang, slug }: { lang: Lang; slug: string }) {
       />
       <section className="py-16">
         <div className="container-px max-w-3xl">
-          <article className="prose prose-brand max-w-none whitespace-pre-line leading-relaxed text-brand-800/90">
+          <article className="prose prose-brand max-w-none whitespace-pre-line leading-relaxed text-ink-secondary">
             {lang === "ar" ? page.content_ar : page.content_en}
           </article>
         </div>

@@ -90,7 +90,7 @@ export default async function ServicePage({ params }: Props) {
                   </h2>
                 )}
                 {b.content_ar && (
-                  <div className="leading-relaxed text-brand-800/90">
+                  <div className="leading-relaxed text-ink-secondary">
                     {lang === "ar" ? b.content_ar : b.content_en}
                   </div>
                 )}
@@ -106,7 +106,7 @@ export default async function ServicePage({ params }: Props) {
               </div>
             )}
 
-            <div className="card flex gap-3 border border-gold-200 bg-gold-50 p-5 text-sm text-brand-800">
+            <div className="card flex gap-3 border border-gold-200 bg-gold-50 p-5 text-sm text-ink-secondary">
               <ShieldAlert className="h-5 w-5 shrink-0 text-gold-600" />
               <p>
                 {lang === "ar"
@@ -121,7 +121,7 @@ export default async function ServicePage({ params }: Props) {
               <h3 className="font-bold text-brand-950">
                 {lang === "ar" ? "هل لديك استفسار؟" : "Have a question?"}
               </h3>
-              <p className="mt-2 text-sm text-brand-700/80">
+              <p className="mt-2 text-sm text-ink-secondary">
                 {lang === "ar"
                   ? "احجز موعدًا للاستشارة والتقييم."
                   : "Book an appointment for consultation and assessment."}

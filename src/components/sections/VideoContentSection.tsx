@@ -64,7 +64,7 @@ export function VideoContentSection({ section, lang }: { section: PageSection; l
         </div>
         <div className="order-1 lg:order-2">
           <SectionHeading title={title} subtitle={subtitle} align="start" className="mb-5" />
-          {text && <p className="whitespace-pre-line leading-relaxed text-brand-800/90">{text}</p>}
+          {text && <p className="whitespace-pre-line leading-relaxed text-ink-secondary">{text}</p>}
           {bullets.length > 0 && (
             <ul className="mt-6 space-y-3">
               {bullets.map((b, i) => (
@@ -72,7 +72,7 @@ export function VideoContentSection({ section, lang }: { section: PageSection; l
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
                     <Check className="h-4 w-4" />
                   </span>
-                  <span className="text-brand-800">{lang === "ar" ? b.ar : b.en}</span>
+                  <span className="text-ink-secondary">{lang === "ar" ? b.ar : b.en}</span>
                 </li>
               ))}
             </ul>

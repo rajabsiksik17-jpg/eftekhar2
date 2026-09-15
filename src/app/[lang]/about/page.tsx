@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import { getPageBySlug, getPageSections } from "@/lib/data";
+import { getContactSettings, getSiteSettings } from "@/lib/settings";
+import { getFormByKey, getFormFields } from "@/lib/forms";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/ui/PageHero";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { SectionHeading } from "@/components/sections/SectionHeading";
 import { Icon } from "@/components/icons";
+import { DynamicForm } from "@/components/forms/DynamicForm";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import type { PageSection } from "@/lib/types";
 
 interface Props {
@@ -22,12 +26,19 @@ export default async function AboutPage({ params }: Props) {
   const lang = (await params).lang as Lang;
   const page = await getPageBySlug("about");
   if (!page) notFound();
-  const sections = await getPageSections(page.id);
+  const [sections, contact, settings, form] = await Promise.all([
+    getPageSections(page.id),
+    getContactSettings(),
+    getSiteSettings(),
+    getFormByKey("contact"),
+  ]);
 
   const intro = sections.find((s) => s.section_type === "introduction");
   const texts = sections.filter((s) => s.section_type === "text");
+  const fields = form ? await getFormFields(form.id) : [];
 
   const crumb = { label: lang === "ar" ? "من نحن" : "About Us" };
+  const t = (ar: string, en: string) => (lang === "ar" ? ar : en);
 
   return (
     <>
@@ -42,6 +53,74 @@ export default async function AboutPage({ params }: Props) {
         <section className="pb-20">
           <div className="container-px grid gap-6 md:grid-cols-2">
             {texts.map((t) => <AboutCard key={t.id} section={t} lang={lang} />)}
+          </div>
+        </section>
+      )}
+
+      {form && (
+        <section className="bg-brand-50/50 py-20">
+          <div className="container-px">
+            <SectionHeading title={t("تواصل معنا", "Contact Us")} />
+            <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
+              <div className="space-y-4">
+                {contact?.phone && (
+                  <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="card flex items-center gap-4 p-5">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white"><Phone className="h-5 w-5" /></span>
+                    <div>
+                      <div className="text-sm font-bold text-ink">{t("الهاتف", "Phone")}</div>
+                      <div className="phone-ltr text-brand-600">{contact.phone}</div>
+                    </div>
+                  </a>
+                )}
+                {contact?.email && (
+                  <a href={`mailto:${contact.email}`} className="card flex items-center gap-4 p-5">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white"><Mail className="h-5 w-5" /></span>
+                    <div>
+                      <div className="text-sm font-bold text-ink">{t("البريد الإلكتروني", "Email")}</div>
+                      <div className="text-brand-600">{contact.email}</div>
+                    </div>
+                  </a>
+                )}
+                {(contact?.address_ar || contact?.address_en) && (
+                  <div className="card flex items-start gap-4 p-5">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white"><MapPin className="h-5 w-5" /></span>
+                    <div>
+                      <div className="text-sm font-bold text-ink">{t("العنوان", "Address")}</div>
+                      <div className="text-brand-600">{lang === "ar" ? contact.address_ar : contact.address_en}</div>
+                    </div>
+                  </div>
+                )}
+                {Array.isArray(contact?.working_hours) && (contact.working_hours as Record<string, string>[]).length > 0 && (
+                  <div className="card flex items-start gap-4 p-5">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white"><Clock className="h-5 w-5" /></span>
+                    <div>
+                      <div className="text-sm font-bold text-ink">{t("ساعات العمل", "Working Hours")}</div>
+                      {(contact.working_hours as Record<string, string>[]).map((w, i) => (
+                        <div key={i} className="text-brand-600">
+                          {lang === "ar" ? w.days_ar : w.days_en}: {lang === "ar" ? w.hours_ar : w.hours_en}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="card p-6 sm:p-8">
+                <DynamicForm
+                  form={form}
+                  fields={fields}
+                  lang={lang}
+                  context={{
+                    categories: [],
+                    services: [],
+                    doctors: [],
+                    defaultCountry: settings.appointment.default_country,
+                    consentText: settings.appointment.consent_text_ar,
+                    consentTextEn: settings.appointment.consent_text_en,
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </section>
       )}
@@ -65,7 +144,7 @@ function AboutIntro({ section, lang }: { section: PageSection; lang: Lang }) {
           subtitle={lang === "ar" ? section.subtitle_ar : section.subtitle_en}
         />
         {localized?.text && (
-          <p className="mx-auto mb-12 max-w-3xl text-center leading-relaxed text-brand-800/90">
+          <p className="mx-auto mb-12 max-w-3xl text-center leading-relaxed text-ink-secondary">
             {localized.text}
           </p>
         )}
@@ -100,7 +179,7 @@ function AboutCard({ section, lang }: { section: PageSection; lang: Lang }) {
         <h3 className="text-lg font-bold text-brand-950">
           {lang === "ar" ? section.title_ar : section.title_en}
         </h3>
-        <p className="mt-2 leading-relaxed text-brand-700/90">{localized?.text}</p>
+        <p className="mt-2 leading-relaxed text-ink-secondary">{localized?.text}</p>
       </div>
     </div>
   );

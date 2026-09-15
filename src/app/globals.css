@@ -41,6 +41,11 @@
   --secondary-700: 3 105 161;
   --secondary-800: 7 89 133;
   --secondary-900: 12 74 110;
+
+  /* Ink — readable text */
+  --ink: 17 24 39;          /* #111827 */
+  --ink-secondary: 75 85 99;  /* #4B5563 */
+  --ink-muted: 107 114 128;   /* #6B7280 */
 }
 
 html {
@@ -85,6 +90,9 @@ body {
   .btn-accent {
     @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-accent-500 text-white hover:bg-accent-600 focus-visible:ring-accent-400 shadow-soft;
   }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 bg-accent-500 text-white hover:bg-accent-600 focus-visible:ring-accent-400 shadow-soft;
+  }
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 border border-brand-200 bg-white/80 text-brand-700 hover:bg-brand-50 focus-visible:ring-brand-400;
   }
@@ -113,10 +121,10 @@ body {
   }
 
   .section-title {
-    @apply text-3xl font-bold leading-tight tracking-tight text-brand-950 sm:text-4xl;
+    @apply text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl;
   }
   .section-subtitle {
-    @apply mt-3 text-base text-brand-700/80 sm:text-lg;
+    @apply mt-3 text-base text-ink-secondary sm:text-lg;
   }
 
   /* Phone number isolation so digits never flip in RTL */

@@ -61,7 +61,7 @@ export default async function CategoryPage({ params }: Props) {
       {category.content_ar && (
         <section className="py-12">
           <div className="container-px">
-            <p className="mx-auto max-w-3xl whitespace-pre-line text-center leading-relaxed text-brand-800/90">
+            <p className="mx-auto max-w-3xl whitespace-pre-line text-center leading-relaxed text-ink-secondary">
               {lang === "ar" ? category.content_ar : category.content_en}
             </p>
           </div>
@@ -84,7 +84,7 @@ export default async function CategoryPage({ params }: Props) {
                   <Icon name={s.icon} className="h-6 w-6" />
                 </div>
                 <h3 className="font-bold text-brand-950">{lang === "ar" ? s.name_ar : s.name_en}</h3>
-                <p className="mt-2 line-clamp-3 flex-1 text-sm text-brand-700/80">
+                <p className="mt-2 line-clamp-3 flex-1 text-sm text-ink-secondary">
                   {lang === "ar" ? s.description_ar : s.description_en}
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600">

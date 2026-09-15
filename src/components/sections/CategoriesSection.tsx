@@ -22,15 +22,17 @@ export function CategoriesSection({
     <section className="py-20">
       <div className="container-px">
         <SectionHeading title={title} subtitle={subtitle} />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {categories.map((c) => {
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+          {categories.map((c, i) => {
             const name = lang === "ar" ? c.name_ar : c.name_en;
             const desc = lang === "ar" ? c.description_ar : c.description_en;
+            // 2 wide cards in the first row, 3 narrower cards in the second.
+            const span = i < 2 ? "sm:col-span-1 lg:col-span-3" : "lg:col-span-2";
             return (
               <Link
                 key={c.id}
                 href={`/${lang}/services/${c.slug}`}
-                className="group relative flex min-h-[240px] flex-col justify-end overflow-hidden rounded-2xl bg-brand-800 p-5 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-soft"
+                className={`group relative flex min-h-[220px] flex-col justify-end overflow-hidden rounded-2xl bg-brand-800 p-5 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-soft ${span}`}
               >
                 {c.cover_image ? (
                   // eslint-disable-next-line @next/next/no-img-element

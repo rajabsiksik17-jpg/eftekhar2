@@ -28,7 +28,7 @@ export function FaqAccordion({ faqs, lang }: { faqs: ServiceFaq[]; lang: Lang })
             />
           </button>
           {open === i && (
-            <div className="border-t border-brand-950/10 px-5 py-4 text-sm leading-relaxed text-brand-700/90">
+            <div className="border-t border-brand-950/10 px-5 py-4 text-sm leading-relaxed text-ink-secondary">
               {lang === "ar" ? f.answer_ar : f.answer_en}
             </div>
           )}

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import type { Lang } from "@/lib/i18n";
-import { getContactSettings } from "@/lib/settings";
+import { getContactSettings, getSiteSettings } from "@/lib/settings";
+import { getFormByKey, getFormFields } from "@/lib/forms";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/ui/PageHero";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { ContactForm } from "@/components/forms/ContactForm";
+import { DynamicForm } from "@/components/forms/DynamicForm";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 interface Props {
@@ -12,15 +13,23 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const lang = (await params).lang as Lang;
-  return buildMetadata({ lang, route: "/contact" });
+  const { lang } = await params;
+  return buildMetadata({ lang: lang as Lang, route: "/contact" });
 }
 
 export default async function ContactPage({ params }: Props) {
-  const lang = (await params).lang as Lang;
-  const contact = await getContactSettings();
-  const workingHours = (Array.isArray(contact?.working_hours) ? contact.working_hours : []) as Record<string, string>[];
+  const { lang: langParam } = await params;
+  const lang = langParam as Lang;
 
+  const [form, contact, settings] = await Promise.all([
+    getFormByKey("contact"),
+    getContactSettings(),
+    getSiteSettings(),
+  ]);
+  if (!form) return null;
+  const fields = await getFormFields(form.id);
+
+  const workingHours = (Array.isArray(contact?.working_hours) ? contact.working_hours : []) as Record<string, string>[];
   const t = (ar: string, en: string) => (lang === "ar" ? ar : en);
 
   return (
@@ -67,7 +76,7 @@ export default async function ContactPage({ params }: Props) {
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white"><Clock className="h-5 w-5" /></span>
                 <div>
                   <div className="text-sm font-bold text-brand-950">{t("ساعات العمل", "Working Hours")}</div>
-                  {workingHours.map((w: Record<string, string>, i) => (
+                  {workingHours.map((w, i) => (
                     <div key={i} className="text-brand-600">
                       {lang === "ar" ? w.days_ar : w.days_en}: {lang === "ar" ? w.hours_ar : w.hours_en}
                     </div>
@@ -83,27 +92,23 @@ export default async function ContactPage({ params }: Props) {
             )}
           </div>
 
-          <ContactForm lang={lang} />
+          <div className="card p-6 sm:p-8">
+            <DynamicForm
+              form={form}
+              fields={fields}
+              lang={lang}
+              context={{
+                categories: [],
+                services: [],
+                doctors: [],
+                defaultCountry: settings.appointment.default_country,
+                consentText: settings.appointment.consent_text_ar,
+                consentTextEn: settings.appointment.consent_text_en,
+              }}
+            />
+          </div>
         </div>
       </section>
-
-      {contact?.google_maps_url && (
-        <section className="pb-16">
-          <div className="container-px">
-            <div className="card overflow-hidden">
-              <iframe
-                title="Map"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(
-                  lang === "ar" ? contact.address_ar ?? "" : contact.address_en ?? "",
-                )}&output=embed`}
-                className="h-[360px] w-full"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-          </div>
-        </section>
-      )}
     </>
   );
 }

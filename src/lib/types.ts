@@ -407,4 +407,37 @@ export interface EmailSettings {
   updated_at: string;
 }
 
+export interface Form extends BaseRow {
+  key: string;
+  name_ar: string | null;
+  name_en: string | null;
+  is_active: boolean;
+  submit_button_ar: string | null;
+  submit_button_en: string | null;
+  success_message_ar: string | null;
+  success_message_en: string | null;
+  error_message_ar: string | null;
+  error_message_en: string | null;
+  notify_email: string | null;
+  notify_enabled: boolean;
+}
+
+export interface FormField extends BaseRow {
+  form_id: string;
+  field_type: string;
+  name: string;
+  label_ar: string | null;
+  label_en: string | null;
+  placeholder_ar: string | null;
+  placeholder_en: string | null;
+  help_text_ar: string | null;
+  help_text_en: string | null;
+  required: boolean;
+  validation: string | null;
+  default_value: string | null;
+  options: Json;
+  display_order: number;
+  is_active: boolean;
+}
+
 export type DbClient = SupabaseClient;

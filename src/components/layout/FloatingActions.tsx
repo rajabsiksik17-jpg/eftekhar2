@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import type { SocialLink } from "@/lib/types";
 import { socialIcon } from "@/components/icons";
@@ -31,6 +32,8 @@ export function FloatingActions(props: FloatingActionsProps) {
 
   const [socialOpen, setSocialOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const pathname = usePathname();
+  const isAppointmentPage = /\/appointment$/.test(pathname);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -76,7 +79,7 @@ export function FloatingActions(props: FloatingActionsProps) {
         </button>
       )}
 
-      {appointmentEnabled && (
+      {appointmentEnabled && !isAppointmentPage && (
         <Link
           href={`/${lang}${appointmentUrl === "/" ? "" : appointmentUrl}`}
           className="btn-gold btn-md animate-pulse-soft"

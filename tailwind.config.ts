@@ -70,6 +70,11 @@ const config: Config = {
           800: rgb("secondary-800"),
           900: rgb("secondary-900"),
         },
+        ink: {
+          DEFAULT: "rgb(var(--ink) / <alpha-value>)",
+          secondary: "rgb(var(--ink-secondary) / <alpha-value>)",
+          muted: "rgb(var(--ink-muted) / <alpha-value>)",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

@@ -85,6 +85,7 @@ const NAV: { group: string; items: { href: string; label: string; icon: React.Co
   {
     group: "التواصل",
     items: [
+      { href: "/admin/forms", label: "النماذج", icon: FileText },
       { href: "/admin/appointments", label: "المواعيد", icon: CalendarDays },
       { href: "/admin/messages", label: "الرسائل", icon: MessageSquare },
     ],

@@ -32,7 +32,7 @@ export function BeforeAfterSection({
                 alt={lang === "ar" ? it.title_ar ?? "" : it.title_en ?? ""}
               />
               {(it.title_ar || it.title_en) && (
-                <figcaption className="mt-3 text-center text-sm font-medium text-brand-800">
+                <figcaption className="mt-3 text-center text-sm font-medium text-ink-secondary">
                   {lang === "ar" ? it.title_ar : it.title_en}
                 </figcaption>
               )}

@@ -68,7 +68,7 @@ export default async function DoctorsPage({ params }: Props) {
                             : d.position}
                       </p>
                       {isMedical && d.bio_ar && (
-                        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-brand-700/80">
+                        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-ink-secondary">
                           {lang === "ar" ? d.bio_ar : d.bio_en}
                         </p>
                       )}
