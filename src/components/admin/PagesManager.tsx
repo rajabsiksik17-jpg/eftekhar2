@@ -91,7 +91,12 @@ export function PagesManager() {
     const [m] = next.splice(i, 1);
     next.splice(t, 0, m);
     setSections(next);
-    await call("POST", "/api/admin/page-sections", { ids: next.map((s) => s.id) });
+    try {
+      await call("POST", "/api/admin/page-sections", { ids: next.map((s) => s.id) });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذر إعادة الترتيب");
+      loadSections(selectedId!);
+    }
   };
 
   const toggle = async (s: Section) => {

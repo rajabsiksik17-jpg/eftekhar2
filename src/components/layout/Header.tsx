@@ -244,15 +244,23 @@ export function Header(props: HeaderProps) {
               const expanded = mobileExpanded === item.id;
               return (
                 <div key={item.id} className="border-b border-brand-950/5 last:border-0">
-                  <button
-                    type="button"
-                    onClick={() => setMobileExpanded(expanded ? null : item.id)}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-sm font-medium text-brand-900 hover:bg-brand-50"
-                    aria-expanded={expanded}
-                  >
-                    {localized(item)}
-                    <ChevronDown className={cn("h-4 w-4 text-ink-muted transition-transform", expanded && "rotate-180")} />
-                  </button>
+                  <div className="flex items-center">
+                    <Link
+                      href={href(item.url)}
+                      className="flex-1 rounded-xl px-3 py-3 text-sm font-medium text-brand-900 hover:bg-brand-50"
+                    >
+                      {localized(item)}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setMobileExpanded(expanded ? null : item.id)}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-brand-700 hover:bg-brand-50"
+                      aria-expanded={expanded}
+                      aria-label={expanded ? "إغلاق" : "فتح"}
+                    >
+                      <ChevronDown className={cn("h-4 w-4 text-ink-muted transition-transform", expanded && "rotate-180")} />
+                    </button>
+                  </div>
                   {expanded && (
                     <div className="pb-2 ps-3">
                       {children.map((c) => (

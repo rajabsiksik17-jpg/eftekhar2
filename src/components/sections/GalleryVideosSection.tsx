@@ -151,6 +151,7 @@ export function GalleryVideosSection({
                 loop: activeVideo.loop,
                 controls: activeVideo.controls,
                 start: activeVideo.start_time ?? undefined,
+                ratio: activeVideo.ratio as "video" | "square" | "portrait" | "wide" | undefined,
               }}
             />
           </div>

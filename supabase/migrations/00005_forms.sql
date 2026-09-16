@@ -90,8 +90,8 @@ begin
     insert into public.form_fields (form_id, field_type, name, label_ar, label_en, placeholder_ar, placeholder_en, required, validation, display_order) values
       (contact_id,'text','name','الاسم الكامل','Full Name','اسمك','Your name',true,'min:2',1),
       (contact_id,'phone','phone','رقم الهاتف','Phone Number','رقم هاتفك','Your phone',false,null,2),
-      (contact_id,'email','email','البريد الإلكتروني','Email','بريدك الإلكتروني','Your email',false,'email',3),
-      (contact_id,'text','subject','الموضوع','Subject','موضوع الرسالة','Subject',false,'max:200',4),
+      (contact_id,'email','email','البريد الإلكتروني','Email','بريدك الإلكتروني','Your email',true,'email',3),
+      (contact_id,'text','subject','الموضوع','Subject','موضوع الرسالة','Subject',true,'max:200',4),
       (contact_id,'textarea','message','رسالتك','Your Message','اكتب رسالتك هنا','Write your message',true,'min:5',5);
   end if;
 
@@ -99,11 +99,11 @@ begin
     insert into public.form_fields (form_id, field_type, name, label_ar, label_en, placeholder_ar, placeholder_en, required, validation, display_order) values
       (appt_id,'text','name','الاسم الكامل','Full Name','اسمك','Your name',true,'min:2',1),
       (appt_id,'phone','phone','رقم الهاتف','Phone Number','رقم هاتفك','Your phone',true,null,2),
-      (appt_id,'email','email','البريد الإلكتروني','Email','بريدك الإلكتروني','Your email',false,'email',3),
+      (appt_id,'email','email','البريد الإلكتروني','Email','بريدك الإلكتروني','Your email',true,'email',3),
       (appt_id,'categories','category','تصنيف الخدمة','Service Category',null,null,false,null,4),
       (appt_id,'services','service','الخدمة','Service',null,null,false,null,5),
       (appt_id,'doctors','doctor','الطبيب','Doctor',null,null,false,null,6),
-      (appt_id,'date','preferred_date','التاريخ المفضل','Preferred Date',null,null,false,null,7),
+      (appt_id,'date','preferred_date','التاريخ المفضل','Preferred Date',null,null,true,null,7),
       (appt_id,'time','preferred_time','الوقت المفضل','Preferred Time',null,null,false,null,8),
       (appt_id,'textarea','message','رسالتك','Your Message','تفاصيل إضافية','Additional details',false,null,9),
       (appt_id,'consent','consent','الموافقة','Consent',null,null,true,null,10);

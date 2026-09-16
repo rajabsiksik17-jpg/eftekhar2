@@ -8,7 +8,7 @@ import { PhoneInput, type PhoneValue } from "@/components/forms/PhoneInput";
 import { validatePhone } from "@/lib/phone";
 import { COUNTRIES } from "@/lib/phone";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Check } from "lucide-react";
 
 interface Context {
   categories: ServiceCategory[];
@@ -40,6 +40,7 @@ export function DynamicForm({
     return init;
   });
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const categoryId = String(values["category"] ?? "");
   const serviceId = String(values["service"] ?? "");
@@ -109,16 +110,26 @@ export function DynamicForm({
       });
       const json = await res.json();
       if (!json.ok) throw new Error(json.message ?? "error");
+      setSubmitted(true);
       toast.success(t(form.success_message_ar, form.success_message_en));
-      const reset: Record<string, unknown> = {};
-      for (const f of fields) reset[f.name] = f.field_type === "checkbox" || f.field_type === "consent" ? false : "";
-      setValues(reset);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t(form.error_message_ar, form.error_message_en));
     } finally {
       setLoading(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
+          <Check className="h-8 w-8" />
+        </span>
+        <h3 className="text-xl font-bold text-ink">{lang === "ar" ? "شكرًا لك!" : "Thank you!"}</h3>
+        <p className="max-w-md text-ink-secondary">{t(form.success_message_ar, form.success_message_en)}</p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={submit} className="space-y-5">
@@ -185,7 +196,7 @@ export function DynamicForm({
               )}
 
               {f.field_type === "categories" && (
-                <select value={categoryId} onChange={(e) => { set("category", e.target.value); set("service", ""); }}>
+                <select className="input" value={categoryId} onChange={(e) => { set("category", e.target.value); set("service", ""); }}>
                   <option value="">{lang === "ar" ? "اختر التصنيف" : "Select category"}</option>
                   {context.categories.map((c) => (
                     <option key={c.id} value={c.id}>{lang === "ar" ? c.name_ar : c.name_en}</option>
@@ -194,7 +205,7 @@ export function DynamicForm({
               )}
 
               {f.field_type === "services" && (
-                <select value={serviceId} onChange={(e) => set("service", e.target.value)}>
+                <select className="input" value={serviceId} onChange={(e) => set("service", e.target.value)}>
                   <option value="">{lang === "ar" ? "اختر الخدمة" : "Select service"}</option>
                   {filteredServices.map((s) => (
                     <option key={s.id} value={s.id}>{lang === "ar" ? s.name_ar : s.name_en}</option>
@@ -203,7 +214,7 @@ export function DynamicForm({
               )}
 
               {f.field_type === "doctors" && (
-                <select value={String(val ?? "")} onChange={(e) => set(f.name, e.target.value)}>
+                <select className="input" value={String(val ?? "")} onChange={(e) => set(f.name, e.target.value)}>
                   <option value="">{lang === "ar" ? "اختر الطبيب" : "Select doctor"}</option>
                   {context.doctors.filter((d) => d.type === "doctor" || d.type === "consultant").map((d) => (
                     <option key={d.id} value={d.id}>{lang === "ar" ? d.name_ar : d.name_en}</option>

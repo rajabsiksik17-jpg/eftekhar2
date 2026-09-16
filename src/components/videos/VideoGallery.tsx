@@ -68,6 +68,7 @@ export function VideoGallery({ videos, lang }: { videos: Video[]; lang: Lang }) 
                 loop: active.loop,
                 controls: active.controls,
                 start: active.start_time ?? undefined,
+                ratio: active.ratio as "video" | "square" | "portrait" | "wide" | undefined,
               }}
             />
           </div>

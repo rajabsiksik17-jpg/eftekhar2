@@ -54,6 +54,7 @@ export async function sendMail(
     });
     return { ok: true };
   } catch (e) {
+    console.error("[email] sendMail failed:", e);
     return { ok: false, error: e instanceof Error ? e.message : "Send failed." };
   }
 }
@@ -82,6 +83,7 @@ export async function sendMailWithAttachments(
     });
     return { ok: true };
   } catch (e) {
+    console.error("[email] sendMailWithAttachments failed:", e);
     return { ok: false, error: e instanceof Error ? e.message : "Send failed." };
   }
 }

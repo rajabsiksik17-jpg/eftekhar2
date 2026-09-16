@@ -109,7 +109,7 @@ export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
     writeColumns: [
       "title_ar", "title_en", "description_ar", "description_en", "youtube_url", "thumbnail",
       "category_id", "display_order", "is_active", "autoplay", "muted", "controls", "loop",
-      "start_time", "end_time", "overlay", "modal",
+      "start_time", "end_time", "overlay", "modal", "ratio",
     ],
     searchableColumns: ["title_ar", "title_en"],
   },

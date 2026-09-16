@@ -276,6 +276,12 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "muted", type: "boolean", label: "كتم الصوت" },
       { name: "controls", type: "boolean", label: "أزرار التحكم" },
       { name: "loop", type: "boolean", label: "تكرار" },
+      { name: "ratio", type: "select", label: "حجم الفيديو", options: [
+        { value: "video", label: "عريض (16:9)" },
+        { value: "wide", label: "عريض جدًا (21:9)" },
+        { value: "square", label: "مربع (1:1)" },
+        { value: "portrait", label: "طولي / ريلز (9:16)" },
+      ] },
       { name: "display_order", type: "number", label: "الترتيب" },
       { name: "is_active", type: "boolean", label: "نشط" },
     ],

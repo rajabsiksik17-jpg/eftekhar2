@@ -11,8 +11,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ key: strin
   try {
     const { key } = await ctx.params;
     const ip = req.headers.get("x-forwarded-for") ?? "local";
-    const rl = rateLimit(`form-${ip}-${key}`, 10, 10 * 60 * 1000);
-    if (!rl.ok) throw new ApiError(429, "rate_limited", "Too many requests.");
+    const rl = rateLimit(`form-${ip}-${key}`, 5, 60 * 60 * 1000);
+    if (!rl.ok) throw new ApiError(429, "rate_limited", "Too many requests. Please try again later.");
 
     const service = createServiceClient();
     const { data: form } = await service.from("forms").select("*").eq("key", key).eq("is_active", true).maybeSingle();
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ key: strin
       const rows = Object.entries(values)
         .map(([k2, val]) => `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#475569;font-weight:600;">${k2}</td><td style="padding:6px 10px;border:1px solid #e2e8f0;">${typeof val === "object" ? JSON.stringify(val) : String(val)}</td></tr>`)
         .join("");
-      await sendMail({
+      const mail = await sendMail({
         to: form.notify_email,
         subject: `${key === "appointment" ? "موعد جديد" : "رسالة جديدة"} — ${form.name_ar ?? key}`,
         html: await wrapEmail(
@@ -135,6 +135,15 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ key: strin
           `<table style="border-collapse:collapse;width:100%;font-size:14px;">${rows}</table>`,
         ),
       });
+      if (!mail.ok) {
+        await service.from("notifications").insert({
+          type: "email",
+          title_ar: "فشل إرسال بريد الإشعار",
+          title_en: "Notification email failed",
+          message_ar: mail.error ?? "تعذر إرسال بريد الإشعار",
+          message_en: mail.error ?? "Could not send notification email",
+        });
+      }
     }
 
     // Thank-you email to the customer

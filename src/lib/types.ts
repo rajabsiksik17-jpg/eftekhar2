@@ -261,6 +261,7 @@ export interface Video extends BaseRow {
   end_time: number | null;
   overlay: boolean;
   modal: boolean;
+  ratio: string;
 }
 
 export interface Testimonial extends BaseRow {
