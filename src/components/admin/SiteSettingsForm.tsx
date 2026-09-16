@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Save } from "lucide-react";
+import { MediaPicker } from "@/components/admin/MediaPicker";
 
 interface Settings {
   site: Record<string, unknown>;
@@ -68,7 +69,7 @@ export function SiteSettingsForm() {
         <Grid>
           <Field label="اسم الموقع (عربي)"><input className="input" value={s(data.site.site_name_ar)} onChange={(e) => setSite("site_name_ar", e.target.value)} /></Field>
           <Field label="اسم الموقع (إنجليزي)"><input className="input" dir="ltr" value={s(data.site.site_name_en)} onChange={(e) => setSite("site_name_en", e.target.value)} /></Field>
-          <Field label="الشعار (URL)"><input className="input" dir="ltr" value={s(data.site.logo_url)} onChange={(e) => setSite("logo_url", e.target.value)} /></Field>
+          <Field label="الشعار (Logo)"><MediaPicker value={s(data.site.logo_url)} onChange={(v) => setSite("logo_url", v)} /></Field>
           <Field label="العنوان الرئيسي (عربي)"><input className="input" value={s(data.site.tagline_ar)} onChange={(e) => setSite("tagline_ar", e.target.value)} /></Field>
           <Field label="العنوان الرئيسي (إنجليزي)"><input className="input" dir="ltr" value={s(data.site.tagline_en)} onChange={(e) => setSite("tagline_en", e.target.value)} /></Field>
         </Grid>
@@ -111,7 +112,7 @@ export function SiteSettingsForm() {
           <ColorField label="اللون الأساسي" value={s(appearance.primary)} onChange={(v) => setAppearance("primary", v)} />
           <ColorField label="اللون الثانوي" value={s(appearance.secondary)} onChange={(v) => setAppearance("secondary", v)} />
           <ColorField label="لون التمييز (Accent)" value={s(appearance.accent)} onChange={(v) => setAppearance("accent", v)} />
-          <Field label="الأيقونة (Favicon URL)"><input className="input" dir="ltr" value={s(appearance.favicon)} onChange={(e) => setAppearance("favicon", e.target.value)} /></Field>
+          <Field label="الأيقونة (Favicon)"><MediaPicker value={s(appearance.favicon)} onChange={(v) => setAppearance("favicon", v)} /></Field>
         </Grid>
       </Section>
 

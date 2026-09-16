@@ -79,6 +79,8 @@ export function MediaPicker({
   const isImage = value && /\.(jpe?g|png|webp|gif|svg)(\?|$)/i.test(value);
 
   const filtered = items.filter((m) => {
+    if (accept === "image" && m.mime_type && !m.mime_type.startsWith("image/")) return false;
+    if (accept === "video" && m.mime_type && !m.mime_type.startsWith("video/")) return false;
     const q = query.trim().toLowerCase();
     if (!q) return true;
     return m.filename.toLowerCase().includes(q);

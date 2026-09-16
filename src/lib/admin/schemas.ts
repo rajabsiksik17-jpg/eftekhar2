@@ -7,6 +7,7 @@ export type FieldType =
   | "boolean"
   | "select"
   | "image"
+  | "video"
   | "date"
   | "url"
   | "json"
@@ -265,7 +266,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "title_en", type: "text", label: "العنوان (إنجليزي)", required: true, dir: "ltr" },
       { name: "description_ar", type: "textarea", label: "الوصف (عربي)", rows: 2 },
       { name: "description_en", type: "textarea", label: "الوصف (إنجليزي)", rows: 2 },
-      { name: "youtube_url", type: "url", label: "رابط YouTube", required: true, dir: "ltr" },
+      { name: "youtube_url", type: "video", label: "الفيديو (رابط YouTube أو رفع ملف)", required: true, dir: "ltr" },
       { name: "thumbnail", type: "image", label: "الصورة المصغّرة" },
       { name: "autoplay", type: "boolean", label: "تشغيل تلقائي" },
       { name: "muted", type: "boolean", label: "كتم الصوت" },

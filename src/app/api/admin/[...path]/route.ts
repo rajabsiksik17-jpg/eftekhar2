@@ -50,6 +50,9 @@ async function handle(req: NextRequest, ctx: { params: Promise<{ path: string[] 
     const page = Number(searchParams.get("page") ?? "1");
     const pageSize = Number(searchParams.get("pageSize") ?? "50");
 
+    if (config.baseFilter) {
+      for (const [k, v] of Object.entries(config.baseFilter)) q = q.eq(k, v);
+    }
     if (search && config.searchableColumns?.length) {
       q = q.or(config.searchableColumns.map((c) => `${c}.ilike.%${search}%`).join(","));
     }
@@ -78,6 +81,7 @@ async function handle(req: NextRequest, ctx: { params: Promise<{ path: string[] 
     }
 
     const row = pickColumns(body, config.writeColumns);
+    if (config.baseFilter) Object.assign(row, config.baseFilter);
     const { data, error } = await service.from(config.table).insert(row).select().single();
     if (error) throw new ApiError(400, "db_error", error.message);
     revalidate(config.tags);

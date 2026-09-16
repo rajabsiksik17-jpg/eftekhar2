@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Loader2, Plus, Pencil, Trash2, ChevronUp, ChevronDown, X, Save } from "lucide-react";
 import { MediaPicker } from "@/components/admin/MediaPicker";
+import { VideoInput } from "@/components/admin/VideoInput";
 
 interface Slide {
   id: string;
@@ -145,7 +146,7 @@ export function HeroSlidesEditor() {
               <div className="sm:col-span-2"><Field label="الوصف (إنجليزي)"><textarea className="input min-h-[70px]" dir="ltr" value={editing.description_en ?? ""} onChange={(e) => setEditing({ ...editing, description_en: e.target.value })} /></Field></div>
               <Field label="صورة الخلفية"><MediaPicker value={editing.background_image ?? ""} onChange={(v) => setEditing({ ...editing, background_image: v })} /></Field>
               <Field label="الصورة"><MediaPicker value={editing.image ?? ""} onChange={(v) => setEditing({ ...editing, image: v })} /></Field>
-              <Field label="فيديو (رابط YouTube)"><input className="input" dir="ltr" value={editing.video_url ?? ""} onChange={(e) => setEditing({ ...editing, video_url: e.target.value })} placeholder="https://youtube.com/watch?v=..." /></Field>
+              <Field label="الفيديو"><VideoInput value={editing.video_url ?? ""} onChange={(v) => setEditing({ ...editing, video_url: v })} /></Field>
               <Field label="الشفافية (0-1)"><input className="input" dir="ltr" type="number" step="0.1" value={editing.overlay} onChange={(e) => setEditing({ ...editing, overlay: Number(e.target.value) })} /></Field>
               <Field label="زر أساسي (عربي)"><input className="input" value={editing.primary_button?.label_ar ?? ""} onChange={(e) => setEditing({ ...editing, primary_button: { ...(editing.primary_button ?? {}), label_ar: e.target.value } })} /></Field>
               <Field label="رابط الزر الأساسي"><input className="input" dir="ltr" value={editing.primary_button?.url ?? ""} onChange={(e) => setEditing({ ...editing, primary_button: { ...(editing.primary_button ?? {}), url: e.target.value } })} /></Field>

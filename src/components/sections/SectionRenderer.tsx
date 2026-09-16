@@ -9,6 +9,7 @@ import type {
   ServiceCategory,
   Statistic,
   Testimonial,
+  Video,
 } from "@/lib/types";
 import { HeroSlider } from "@/components/sections/HeroSlider";
 import { StatsSection } from "@/components/sections/StatsSection";
@@ -23,6 +24,7 @@ import { BeforeAfterSection } from "@/components/sections/BeforeAfterSection";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { WayToClinic } from "@/components/sections/WayToClinic";
 import { FinalCta } from "@/components/sections/FinalCta";
+import { GalleryVideosSection } from "@/components/sections/GalleryVideosSection";
 
 export interface SectionData {
   heroSlides: HeroSlide[];
@@ -33,6 +35,7 @@ export interface SectionData {
   testimonials: Testimonial[];
   beforeAfter: GalleryItem[];
   gallery: GalleryItem[];
+  videos: Video[];
   contact: ContactSettings | null;
 }
 
@@ -113,6 +116,17 @@ export function SectionRenderer({
                 key={section.id}
                 title={lang === "ar" ? section.title_ar : section.title_en}
                 items={data.gallery}
+                lang={lang}
+              />
+            );
+          case "gallery_videos":
+            return (
+              <GalleryVideosSection
+                key={section.id}
+                title={lang === "ar" ? section.title_ar : section.title_en}
+                subtitle={lang === "ar" ? section.subtitle_ar : section.subtitle_en}
+                gallery={data.gallery}
+                videos={data.videos}
                 lang={lang}
               />
             );

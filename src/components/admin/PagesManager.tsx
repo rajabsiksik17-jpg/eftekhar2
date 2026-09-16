@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Loader2, Plus, Pencil, Trash2, Copy, ChevronUp, ChevronDown, X, Save, Eye, EyeOff } from "lucide-react";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { IconPicker } from "@/components/admin/IconPicker";
+import { VideoInput } from "@/components/admin/VideoInput";
 import { HeroSlidesEditor } from "@/components/admin/HeroSlidesEditor";
 
 interface Page {
@@ -41,6 +42,7 @@ const TYPES = [
   { value: "testimonials", label: "التقييمات" },
   { value: "before_after", label: "قبل / بعد" },
   { value: "gallery", label: "معرض الصور" },
+  { value: "gallery_videos", label: "معرض صور + فيديوهات" },
   { value: "way_to_clinic", label: "الطريق إلينا" },
   { value: "image_text", label: "صورة + نص" },
   { value: "final_cta", label: "دعوة أخيرة" },
@@ -240,6 +242,10 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
   const withFeatures = ["introduction", "video_content"].includes(section.section_type);
   const withButtons = section.section_type === "image_text";
   const withCta = section.section_type === "final_cta";
+  const withIntroVideo = section.section_type === "introduction";
+  const withMobileToggle = ["introduction", "image_text"].includes(section.section_type);
+  const settings = section.settings ?? {};
+  const setSettings = (patch: Record<string, unknown>) => onChange({ ...section, settings: { ...settings, ...patch } });
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/50 p-4">
@@ -267,7 +273,21 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
           )}
 
           {withVideo && (
-            <div className="sm:col-span-2"><Field label="رابط الفيديو (YouTube)"><input className="input" dir="ltr" value={c.video?.youtube_url ?? ""} onChange={(e) => setContent({ video: { ...(c.video ?? {}), youtube_url: e.target.value } })} placeholder="https://youtube.com/watch?v=..." /></Field></div>
+            <div className="sm:col-span-2"><Field label="الفيديو"><VideoInput value={c.video?.youtube_url ?? ""} onChange={(v) => setContent({ video: { ...(c.video ?? {}), youtube_url: v } })} /></Field></div>
+          )}
+
+          {withIntroVideo && (
+            <>
+              <div className="sm:col-span-2"><Field label="الفيديو (YouTube أو ملف)"><VideoInput value={c.video?.url ?? ""} onChange={(v) => setContent({ video: { ...(c.video ?? {}), url: v } })} /></Field></div>
+              <Toggle label="تشغيل تلقائي" checked={Boolean(c.video?.autoplay)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), autoplay: v } })} />
+              <Toggle label="صامت" checked={Boolean(c.video?.muted)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), muted: v } })} />
+              <Toggle label="تكرار" checked={Boolean(c.video?.loop)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), loop: v } })} />
+              <Toggle label="إظهار أزرار التحكم" checked={c.video?.controls !== false} onChange={(v) => setContent({ video: { ...(c.video ?? {}), controls: v } })} />
+            </>
+          )}
+
+          {withMobileToggle && (
+            <Toggle label="على الجوال: الصورة أسفل العنوان" checked={settings.image_below_mobile !== false} onChange={(v) => setSettings({ image_below_mobile: v })} />
           )}
 
           {withCta && (
@@ -344,4 +364,15 @@ function ButtonsEditor({ buttons, onChange }: { buttons: { label_ar?: string; la
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div><label className="label">{label}</label>{children}</div>;
+}
+
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <div className="flex items-end pb-2">
+      <label className="flex items-center gap-2 text-sm font-medium text-ink-secondary">
+        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-brand-300 text-brand-600" />
+        {label}
+      </label>
+    </div>
+  );
 }

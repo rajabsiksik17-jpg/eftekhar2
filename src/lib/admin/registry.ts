@@ -9,6 +9,7 @@ export interface EntityConfig {
   orderAsc?: boolean;
   writeColumns: string[];
   searchableColumns?: string[];
+  baseFilter?: Record<string, unknown>;
 }
 
 export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
@@ -86,6 +87,19 @@ export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
       "before_image", "after_image", "category_id", "alt_text", "display_order", "is_active",
     ],
     searchableColumns: ["title_ar", "title_en"],
+    baseFilter: { type: "normal" },
+  },
+  "before-after": {
+    table: "gallery_items",
+    permission: "gallery",
+    tags: [CONTENT_TAG],
+    order: "display_order",
+    writeColumns: [
+      "type", "title_ar", "title_en", "description_ar", "description_en",
+      "before_image", "after_image", "alt_text", "display_order", "is_active",
+    ],
+    searchableColumns: ["title_ar", "title_en"],
+    baseFilter: { type: "before_after" },
   },
   videos: {
     table: "videos",

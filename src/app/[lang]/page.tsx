@@ -11,6 +11,7 @@ import {
   getPageSections,
   getStatistics,
   getTestimonials,
+  getVideos,
 } from "@/lib/data";
 import { getContactSettings } from "@/lib/settings";
 import { buildMetadata } from "@/lib/seo";
@@ -32,7 +33,7 @@ export default async function HomePage({ params }: Props) {
   const page = await getPageBySlug("home");
   if (!page) notFound();
 
-  const [sections, heroSlides, stats, categories, featuredServices, doctors, testimonials, gallery, contact] =
+  const [sections, heroSlides, stats, categories, featuredServices, doctors, testimonials, gallery, videos, contact] =
     await Promise.all([
       getPageSections(page.id),
       getHeroSlides(),
@@ -42,6 +43,7 @@ export default async function HomePage({ params }: Props) {
       getDoctors("doctor"),
       getTestimonials(),
       getGalleryItems("normal"),
+      getVideos(),
       getContactSettings(),
     ]);
 
@@ -60,6 +62,7 @@ export default async function HomePage({ params }: Props) {
         testimonials,
         beforeAfter,
         gallery,
+        videos,
         contact,
       }}
     />
