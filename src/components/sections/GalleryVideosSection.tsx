@@ -6,6 +6,7 @@ import type { Lang } from "@/lib/i18n";
 import type { GalleryItem, Video } from "@/lib/types";
 import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import { youtubeThumbnail } from "@/components/ui/YouTubeEmbed";
+import { VideoThumb } from "@/components/ui/VideoThumb";
 import { ChevronLeft, ChevronRight, Images, Play, X, ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -116,7 +117,7 @@ export function GalleryVideosSection({
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={thumb} alt={lang === "ar" ? v.title_ar : v.title_en} className="h-full w-full object-cover" />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-brand-300">Video</div>
+                          <VideoThumb url={v.youtube_url} alt={lang === "ar" ? v.title_ar : v.title_en} className="h-full w-full object-cover" />
                         )}
                         <span className="absolute inset-0 flex items-center justify-center bg-brand-950/30">
                           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-brand-700 transition group-hover:scale-110">

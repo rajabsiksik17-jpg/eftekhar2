@@ -3,7 +3,9 @@
 import { useState } from "react";
 import type { Lang } from "@/lib/i18n";
 import type { Video } from "@/lib/types";
-import { YouTubeEmbed, youtubeThumbnail } from "@/components/ui/YouTubeEmbed";
+import { youtubeThumbnail } from "@/components/ui/YouTubeEmbed";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
+import { VideoThumb } from "@/components/ui/VideoThumb";
 import { Play, X } from "lucide-react";
 
 export function VideoGallery({ videos, lang }: { videos: Video[]; lang: Lang }) {
@@ -26,7 +28,7 @@ export function VideoGallery({ videos, lang }: { videos: Video[]; lang: Lang }) 
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={thumb} alt={lang === "ar" ? v.title_ar : v.title_en} className="h-full w-full object-cover" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-brand-300">Video</div>
+                  <VideoThumb url={v.youtube_url} alt={lang === "ar" ? v.title_ar : v.title_en} className="h-full w-full object-cover" />
                 )}
                 <div className="absolute inset-0 flex items-center justify-center bg-brand-950/30 opacity-90 transition group-hover:bg-brand-950/40">
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 text-brand-700 shadow-lg transition group-hover:scale-110">
@@ -58,12 +60,15 @@ export function VideoGallery({ videos, lang }: { videos: Video[]; lang: Lang }) 
             <X className="h-6 w-6" />
           </button>
           <div className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-            <YouTubeEmbed
-              url={active.youtube_url}
-              title={lang === "ar" ? active.title_ar : active.title_en}
-              autoplay
-              controls={active.controls}
-              start={active.start_time ?? undefined}
+            <VideoPlayer
+              config={{
+                url: active.youtube_url,
+                autoplay: true,
+                muted: active.muted,
+                loop: active.loop,
+                controls: active.controls,
+                start: active.start_time ?? undefined,
+              }}
             />
           </div>
         </div>

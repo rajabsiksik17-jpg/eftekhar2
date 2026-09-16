@@ -223,12 +223,21 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
   const setContent = (patch: Record<string, unknown>) => onChange({ ...section, content: { ...c, ...patch } });
 
   if (section.section_type === "hero") {
+    const hs = (section.settings ?? {}) as { autoplay?: boolean; interval?: number };
+    const setHs = (patch: Record<string, unknown>) => onChange({ ...section, settings: { ...(section.settings ?? {}), ...patch } });
     return (
       <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/50 p-4">
         <div className="my-8 w-full max-w-3xl rounded-2xl bg-white p-6" dir="rtl">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-bold text-ink">شرائح الواجهة</h2>
             <button onClick={onClose}><X className="h-5 w-5 text-brand-500" /></button>
+          </div>
+          <div className="mb-4 flex flex-wrap items-center gap-4">
+            <Toggle label="تشغيل تلقائي" checked={hs.autoplay !== false} onChange={(v) => setHs({ autoplay: v })} />
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-ink-secondary">المدة (ثانية)</label>
+              <input className="input w-24" dir="ltr" type="number" value={hs.interval ?? 5500} onChange={(e) => setHs({ interval: Number(e.target.value) })} />
+            </div>
           </div>
           <HeroSlidesEditor />
         </div>
@@ -244,6 +253,7 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
   const withCta = section.section_type === "final_cta";
   const withIntroVideo = section.section_type === "introduction";
   const withMobileToggle = ["introduction", "image_text"].includes(section.section_type);
+  const withStatsSettings = section.section_type === "statistics";
   const settings = section.settings ?? {};
   const setSettings = (patch: Record<string, unknown>) => onChange({ ...section, settings: { ...settings, ...patch } });
 
@@ -288,6 +298,13 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
 
           {withMobileToggle && (
             <Toggle label="على الجوال: الصورة أسفل العنوان" checked={settings.image_below_mobile !== false} onChange={(v) => setSettings({ image_below_mobile: v })} />
+          )}
+
+          {withStatsSettings && (
+            <>
+              <Field label="لون خلفية القسم"><input type="color" className="h-10 w-20 rounded-lg border border-brand-950/15 p-1" value={String(settings.background_color ?? "#172554")} onChange={(e) => setSettings({ background_color: e.target.value })} /></Field>
+              <Toggle label="خلفية شفافة" checked={Boolean(settings.transparent)} onChange={(v) => setSettings({ transparent: v })} />
+            </>
           )}
 
           {withCta && (

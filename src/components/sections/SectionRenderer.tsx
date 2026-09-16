@@ -53,9 +53,24 @@ export function SectionRenderer({
       {sections.map((section) => {
         switch (section.section_type) {
           case "hero":
-            return <HeroSlider key={section.id} slides={data.heroSlides} lang={lang} />;
+            return (
+              <HeroSlider
+                key={section.id}
+                slides={data.heroSlides}
+                lang={lang}
+                autoplay={(section.settings as { autoplay?: boolean })?.autoplay !== false}
+                interval={Number((section.settings as { interval?: number })?.interval ?? 5500)}
+              />
+            );
           case "statistics":
-            return <StatsSection key={section.id} stats={data.stats} lang={lang} />;
+            return (
+              <StatsSection
+                key={section.id}
+                stats={data.stats}
+                lang={lang}
+                settings={(section.settings as { background_color?: string; transparent?: boolean }) ?? {}}
+              />
+            );
           case "introduction":
             return <IntroductionSection key={section.id} section={section} lang={lang} />;
           case "video_content":

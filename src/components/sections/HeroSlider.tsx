@@ -6,6 +6,7 @@ import type { Lang } from "@/lib/i18n";
 import type { HeroSlide } from "@/lib/types";
 import { Icon } from "@/components/icons";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import { cn } from "@/lib/utils";
 
 interface SlideButton {
@@ -20,7 +21,17 @@ interface Bullet {
   en?: string;
 }
 
-export function HeroSlider({ slides, lang }: { slides: HeroSlide[]; lang: Lang }) {
+export function HeroSlider({
+  slides,
+  lang,
+  autoplay = true,
+  interval = 5500,
+}: {
+  slides: HeroSlide[];
+  lang: Lang;
+  autoplay?: boolean;
+  interval?: number;
+}) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStart = useRef<number | null>(null);
@@ -35,10 +46,10 @@ export function HeroSlider({ slides, lang }: { slides: HeroSlide[]; lang: Lang }
   );
 
   useEffect(() => {
-    if (single || paused) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 5500);
+    if (single || paused || !autoplay) return;
+    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), interval);
     return () => clearInterval(t);
-  }, [single, paused, slides.length]);
+  }, [single, paused, autoplay, interval, slides.length]);
 
   const slide = slides[index];
   if (!slide) return null;
@@ -77,7 +88,11 @@ export function HeroSlider({ slides, lang }: { slides: HeroSlide[]; lang: Lang }
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {bgImage && (
+      {slide.video_url ? (
+        <div className="absolute inset-0">
+          <VideoPlayer config={{ url: slide.video_url, autoplay: true, muted: true, loop: true, controls: false }} className="h-full w-full !aspect-auto rounded-none object-cover" />
+        </div>
+      ) : bgImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={bgImage}
@@ -85,7 +100,7 @@ export function HeroSlider({ slides, lang }: { slides: HeroSlide[]; lang: Lang }
           className="absolute inset-0 h-full w-full object-cover"
           draggable={false}
         />
-      )}
+      ) : null}
       {slide.background_color && (
         <div className="absolute inset-0" style={{ backgroundColor: slide.background_color }} />
       )}

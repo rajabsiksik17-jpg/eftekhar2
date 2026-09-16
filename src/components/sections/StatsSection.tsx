@@ -24,7 +24,15 @@ function CountUp({ value, start }: { value: number; start: boolean }) {
   return <>{display.toLocaleString()}</>;
 }
 
-export function StatsSection({ stats, lang }: { stats: Statistic[]; lang: Lang }) {
+export function StatsSection({
+  stats,
+  lang,
+  settings,
+}: {
+  stats: Statistic[];
+  lang: Lang;
+  settings?: { background_color?: string; transparent?: boolean };
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [start, setStart] = useState(false);
 
@@ -46,8 +54,11 @@ export function StatsSection({ stats, lang }: { stats: Statistic[]; lang: Lang }
 
   if (stats.length === 0) return null;
 
+  const bg = settings?.background_color ?? "#172554";
+  const transparent = Boolean(settings?.transparent);
+
   return (
-    <section className="bg-brand-950 py-14">
+    <section className="py-14" style={transparent ? undefined : { backgroundColor: bg }}>
       <div ref={ref} className="container-px grid grid-cols-2 gap-6 md:grid-cols-4">
         {stats.map((s) => (
           <div key={s.id} className="text-center">

@@ -28,7 +28,8 @@ export interface VideoConfig {
 export function VideoPlayer({ config, className }: { config: VideoConfig; className?: string }) {
   const url = config.url ?? "";
   const autoplay = Boolean(config.autoplay);
-  const muted = Boolean(config.muted);
+  // Browsers only allow autoplay when muted.
+  const muted = autoplay ? true : Boolean(config.muted);
   const loop = Boolean(config.loop);
   const controls = config.controls !== false;
   const poster = config.poster;

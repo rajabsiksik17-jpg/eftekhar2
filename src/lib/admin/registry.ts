@@ -84,7 +84,7 @@ export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
     order: "display_order",
     writeColumns: [
       "type", "title_ar", "title_en", "description_ar", "description_en", "image",
-      "before_image", "after_image", "category_id", "alt_text", "display_order", "is_active",
+      "before_image", "after_image", "category_id", "service_id", "alt_text", "display_order", "is_active",
     ],
     searchableColumns: ["title_ar", "title_en"],
     baseFilter: { type: "normal" },
@@ -96,7 +96,7 @@ export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
     order: "display_order",
     writeColumns: [
       "type", "title_ar", "title_en", "description_ar", "description_en",
-      "before_image", "after_image", "alt_text", "display_order", "is_active",
+      "before_image", "after_image", "service_id", "alt_text", "display_order", "is_active",
     ],
     searchableColumns: ["title_ar", "title_en"],
     baseFilter: { type: "before_after" },

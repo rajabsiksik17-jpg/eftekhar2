@@ -2,13 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
-import { getServiceBySlug, getCategoryBySlug, getServiceBlocks, getFaqs } from "@/lib/data";
+import { getServiceBySlug, getCategoryBySlug, getServiceBlocks, getFaqs, getGalleryItemsByService } from "@/lib/data";
+import { getContactSettings } from "@/lib/settings";
 import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/ui/PageHero";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { YouTubeEmbed } from "@/components/ui/YouTubeEmbed";
-import { ShieldAlert, CalendarCheck } from "lucide-react";
+import { BeforeAfterSlider } from "@/components/ui/BeforeAfterSlider";
+import { ShieldAlert, CalendarCheck, Phone, Mail, MapPin } from "lucide-react";
 
 interface Props {
   params: Promise<{ lang: string; category: string; service: string }>;
@@ -36,9 +38,12 @@ export default async function ServicePage({ params }: Props) {
   if (!service) notFound();
   const category = await getCategoryBySlug(categorySlug);
 
-  const [blocks, faqs] = await Promise.all([
+  const [blocks, faqs, contact, serviceBeforeAfter, serviceGallery] = await Promise.all([
     getServiceBlocks(service.id),
     getFaqs({ serviceId: service.id }),
+    getContactSettings(),
+    getGalleryItemsByService(service.id, "before_after"),
+    getGalleryItemsByService(service.id, "normal"),
   ]);
 
   return (
@@ -128,6 +133,52 @@ export default async function ServicePage({ params }: Props) {
                   : "Medical notice: results vary by case. The suitability of any procedure is determined after medical assessment and discussion of options, benefits and risks with the specialist. This information is not a substitute for medical consultation."}
               </p>
             </div>
+
+            {serviceBeforeAfter.length > 0 && (
+              <div>
+                <h2 className="mb-4 text-xl font-bold text-brand-950">
+                  {lang === "ar" ? `قبل وبعد ${lang === "ar" ? service.name_ar : service.name_en}` : `Before & After ${service.name_en}`}
+                </h2>
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                  {serviceBeforeAfter.map((it) => (
+                    <figure key={it.id}>
+                      <BeforeAfterSlider
+                        before={it.before_image ?? ""}
+                        after={it.after_image ?? ""}
+                        beforeLabel={lang === "ar" ? "قبل" : "Before"}
+                        afterLabel={lang === "ar" ? "بعد" : "After"}
+                        alt={lang === "ar" ? it.title_ar ?? "" : it.title_en ?? ""}
+                      />
+                      {(it.title_ar || it.title_en) && (
+                        <figcaption className="mt-2 text-center text-sm font-medium text-ink-secondary">
+                          {lang === "ar" ? it.title_ar : it.title_en}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {serviceGallery.length > 0 && (
+              <div>
+                <h2 className="mb-4 text-xl font-bold text-brand-950">
+                  {lang === "ar" ? `معرض صور ${service.name_ar}` : `${service.name_en} Gallery`}
+                </h2>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {serviceGallery.map((it) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={it.id}
+                      src={it.image ?? ""}
+                      alt={it.alt_text ?? (lang === "ar" ? it.title_ar ?? "" : it.title_en ?? "")}
+                      className="aspect-square w-full rounded-xl object-cover"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <aside className="space-y-5">
@@ -140,7 +191,28 @@ export default async function ServicePage({ params }: Props) {
                   ? "احجز موعدًا للاستشارة والتقييم."
                   : "Book an appointment for consultation and assessment."}
               </p>
-              <Link href={`/${lang}/appointment?service=${service.slug}`} className="btn-primary btn-md mt-4 w-full">
+              <div className="mt-4 space-y-3 text-sm text-ink-secondary">
+                {contact?.phone && (
+                  <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><Phone className="h-4 w-4" /></span>
+                    <span className="phone-ltr">{contact.phone}</span>
+                  </a>
+                )}
+                {contact?.email && (
+                  <a href={`mailto:${contact.email}`} className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><Mail className="h-4 w-4" /></span>
+                    <span className="break-all">{contact.email}</span>
+                  </a>
+                )}
+                {(contact?.address_ar || contact?.address_en) && (
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><MapPin className="h-4 w-4" /></span>
+                    <span>{lang === "ar" ? contact.address_ar : contact.address_en}</span>
+                  </div>
+                )}
+              </div>
+              <Link href={`/${lang}/appointment?service=${service.slug}`} className="btn-primary btn-md mt-5 w-full">
+                <CalendarCheck className="h-4 w-4" />
                 {lang === "ar" ? "احجز موعد" : "Book Appointment"}
               </Link>
             </div>

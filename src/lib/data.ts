@@ -188,6 +188,23 @@ export const getGalleryItems = unstable_cache(
   opts,
 );
 
+export const getGalleryItemsByService = unstable_cache(
+  async (serviceId: string, type?: "normal" | "before_after"): Promise<GalleryItem[]> => {
+    const supabase = createAnonClient();
+    let q = supabase
+      .from("gallery_items")
+      .select("*")
+      .eq("service_id", serviceId)
+      .eq("is_active", true)
+      .order("display_order");
+    if (type) q = q.eq("type", type);
+    const { data } = await q;
+    return data ?? [];
+  },
+  ["gallery-items-by-service"],
+  opts,
+);
+
 export const getGalleryCategories = unstable_cache(
   async (): Promise<GalleryCategory[]> => {
     const supabase = createAnonClient();

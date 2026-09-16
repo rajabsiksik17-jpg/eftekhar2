@@ -58,16 +58,21 @@ export default async function ServicesPage({ params }: Props) {
                     <Link
                       key={s.id}
                       href={`/${lang}/services/${cat.slug}/${s.slug}`}
-                      className="card group flex items-center gap-4 p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+                      className="card group flex items-center gap-4 overflow-hidden p-3 transition hover:-translate-y-0.5 hover:shadow-soft"
                     >
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
-                        <Icon name={s.icon} className="h-5 w-5" />
-                      </div>
+                      {s.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={s.image} alt={lang === "ar" ? s.name_ar : s.name_en} className="h-16 w-16 shrink-0 rounded-xl object-cover" />
+                      ) : (
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
+                          <Icon name={s.icon} className="h-7 w-7" />
+                        </div>
+                      )}
                       <div className="flex-1">
                         <div className="font-semibold text-brand-950">
                           {lang === "ar" ? s.name_ar : s.name_en}
                         </div>
-                        <div className="line-clamp-2 text-sm text-brand-600">
+                        <div className="line-clamp-2 text-sm text-ink-secondary">
                           {lang === "ar" ? s.description_ar : s.description_en}
                         </div>
                       </div>

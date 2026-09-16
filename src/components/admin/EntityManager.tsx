@@ -17,6 +17,7 @@ import {
 import { IconPicker } from "@/components/admin/IconPicker";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { VideoInput } from "@/components/admin/VideoInput";
+import { ServiceSelect } from "@/components/admin/ServiceSelect";
 
 type Row = Record<string, unknown>;
 
@@ -357,6 +358,8 @@ function FieldInput({
         <MediaPicker value={String(value ?? "")} onChange={onChange} />
       ) : field.type === "video" ? (
         <VideoInput value={String(value ?? "")} onChange={onChange} />
+      ) : field.type === "services" ? (
+        <ServiceSelect value={String(value ?? "")} onChange={onChange} />
       ) : (
         <input
           type={field.type === "number" ? "number" : "text"}

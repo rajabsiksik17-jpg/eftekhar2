@@ -26,15 +26,13 @@ export function BeforeAfterSlider({
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const isRtl = getComputedStyle(el).direction === "rtl";
-    let pct = ((clientX - rect.left) / rect.width) * 100;
-    if (isRtl) pct = 100 - pct;
+    const pct = ((clientX - rect.left) / rect.width) * 100;
     setPos(Math.min(100, Math.max(0, pct)));
   }, []);
 
   const onPointerDown = (e: React.PointerEvent) => {
     dragging.current = true;
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
     update(e.clientX);
   };
   const onPointerMove = (e: React.PointerEvent) => {
@@ -48,13 +46,15 @@ export function BeforeAfterSlider({
     <div
       ref={containerRef}
       className={cn(
-        "relative aspect-[4/3] w-full select-none overflow-hidden rounded-2xl bg-brand-100",
+        "relative aspect-[4/3] w-full cursor-ew-resize select-none overflow-hidden rounded-2xl bg-brand-100",
         className,
       )}
+      style={{ touchAction: "none" }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={stop}
       onPointerLeave={stop}
+      onPointerCancel={stop}
       role="slider"
       aria-label={alt ?? "Before and after comparison"}
       aria-valuenow={Math.round(pos)}
@@ -70,38 +70,28 @@ export function BeforeAfterSlider({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={after} alt={alt ?? "After"} className="absolute inset-0 h-full w-full object-cover" draggable={false} />
 
-      {/* Before (clipped) */}
-      <div
-        className="absolute inset-0 overflow-hidden"
-        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        dir="ltr"
-      >
+      {/* Before (clipped from the right, so it appears on the left side) */}
+      <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={before}
-          alt={alt ?? "Before"}
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ transform: "scaleX(-1)" }}
-          draggable={false}
-        />
+        <img src={before} alt={alt ?? "Before"} className="absolute inset-0 h-full w-full object-cover" draggable={false} />
       </div>
 
       {/* Divider */}
       <div className="absolute inset-y-0 w-0.5 bg-white" style={{ left: `${pos}%`, transform: "translateX(-50%)" }}>
-        <span className="absolute top-1/2 left-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-brand-700 shadow-md">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 7l-5 5 5 5M16 7l5 5-5 5" />
+        <span className="absolute top-1/2 left-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-brand-700 shadow-md">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 6l-6 6 6 6M15 6l6 6-6 6" />
           </svg>
         </span>
       </div>
 
       {beforeLabel && (
-        <span className="absolute top-3 left-3 rounded-full bg-brand-950/70 px-3 py-1 text-xs font-medium text-white">
+        <span className="pointer-events-none absolute top-3 left-3 rounded-full bg-brand-950/70 px-3 py-1 text-xs font-medium text-white">
           {beforeLabel}
         </span>
       )}
       {afterLabel && (
-        <span className="absolute top-3 right-3 rounded-full bg-brand-600/80 px-3 py-1 text-xs font-medium text-white">
+        <span className="pointer-events-none absolute top-3 right-3 rounded-full bg-brand-600/80 px-3 py-1 text-xs font-medium text-white">
           {afterLabel}
         </span>
       )}

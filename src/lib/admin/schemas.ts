@@ -11,7 +11,8 @@ export type FieldType =
   | "date"
   | "url"
   | "json"
-  | "icon";
+  | "icon"
+  | "services";
 
 export interface Field {
   name: string;
@@ -246,6 +247,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "image", type: "image", label: "الصورة (للنوع العادي)" },
       { name: "before_image", type: "image", label: "صورة قبل" },
       { name: "after_image", type: "image", label: "صورة بعد" },
+      { name: "service_id", type: "services", label: "الخدمة المرتبطة (اختياري)" },
       { name: "alt_text", type: "text", label: "النص البديل (Alt)" },
       { name: "display_order", type: "number", label: "الترتيب" },
       { name: "is_active", type: "boolean", label: "نشط" },
@@ -317,6 +319,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
       { name: "title_en", type: "text", label: "العنوان (إنجليزي)", dir: "ltr" },
       { name: "before_image", type: "image", label: "صورة قبل", required: true },
       { name: "after_image", type: "image", label: "صورة بعد", required: true },
+      { name: "service_id", type: "services", label: "الخدمة المرتبطة (اختياري)" },
       { name: "description_ar", type: "textarea", label: "الوصف (عربي)", rows: 2 },
       { name: "description_en", type: "textarea", label: "الوصف (إنجليزي)", rows: 2 },
       { name: "display_order", type: "number", label: "الترتيب" },
