@@ -38,6 +38,13 @@ export const ENTITY_REGISTRY: Record<string, EntityConfig> = {
     ],
     searchableColumns: ["name_ar", "name_en", "slug"],
   },
+  "service-content-blocks": {
+    table: "service_content_blocks",
+    permission: "services",
+    tags: [CONTENT_TAG],
+    order: "display_order",
+    writeColumns: ["service_id", "block_type", "title_ar", "title_en", "content_ar", "content_en", "media", "display_order", "is_active"],
+  },
   doctors: {
     table: "doctors",
     permission: "doctors",

@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Loader2, Plus, Pencil, Trash2, ChevronUp, ChevronDown, X, Save, Upload, Eye, EyeOff, ImageIcon } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, ChevronUp, ChevronDown, X, Save, Eye, EyeOff, ImageIcon } from "lucide-react";
+import { MediaPicker } from "@/components/admin/MediaPicker";
 
 interface Section {
   id: string;
@@ -235,10 +236,7 @@ function SectionEditor({
             <Field label="النص (إنجليزي)"><textarea className="input min-h-[80px]" dir="ltr" value={section.content.en?.text ?? ""} onChange={(e) => setText("en", e.target.value)} /></Field>
           </div>
           <div className="sm:col-span-2">
-            <ImageField
-              value={section.content.image ?? ""}
-              onChange={(v) => setContent({ image: v })}
-            />
+            <Field label="الصورة"><MediaPicker value={section.content.image ?? ""} onChange={(v) => setContent({ image: v })} /></Field>
           </div>
           <Field label="مكان الصورة">
             <select className="input" value={section.settings.layout ?? "image_left"} onChange={(e) => onChange({ ...section, settings: { ...section.settings, layout: e.target.value } })}>
@@ -333,54 +331,6 @@ function ButtonRow({
         <button onClick={() => onMove(-1)} className="rounded p-1 text-brand-500 hover:bg-brand-100"><ChevronUp className="h-4 w-4" /></button>
         <button onClick={() => onMove(1)} className="rounded p-1 text-brand-500 hover:bg-brand-100"><ChevronDown className="h-4 w-4" /></button>
         <button onClick={onRemove} className="rounded p-1 text-red-500 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
-      </div>
-    </div>
-  );
-}
-
-function ImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [uploading, setUploading] = useState(false);
-  const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/media/upload", { method: "POST", body: fd });
-      const json = await res.json();
-      if (!json.ok) throw new Error(json.message);
-      onChange(json.data.url);
-      toast.success("تم رفع الصورة");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "فشل الرفع");
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
-  };
-
-  return (
-    <div>
-      <label className="label">الصورة</label>
-      <div className="flex items-center gap-3">
-        {value ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={value} alt="" className="h-16 w-24 rounded-lg object-cover" />
-        ) : (
-          <span className="flex h-16 w-24 items-center justify-center rounded-lg bg-brand-50 text-brand-300"><ImageIcon className="h-6 w-6" /></span>
-        )}
-        <div className="flex-1 space-y-2">
-          <input className="input" dir="ltr" value={value} onChange={(e) => onChange(e.target.value)} placeholder="https://..." />
-          <div className="flex gap-2">
-            <label className="btn-outline btn-sm cursor-pointer">
-              {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-              رفع صورة
-              <input type="file" accept="image/*" className="hidden" onChange={upload} />
-            </label>
-            {value && <button type="button" onClick={() => onChange("")} className="btn-ghost btn-sm text-red-600">إزالة</button>}
-          </div>
-        </div>
       </div>
     </div>
   );

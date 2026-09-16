@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { IconPicker } from "@/components/admin/IconPicker";
+import { MediaPicker } from "@/components/admin/MediaPicker";
 
 type Row = Record<string, unknown>;
 
@@ -351,6 +352,8 @@ function FieldInput({
         <input type="date" className="input" value={String(value ?? "")} onChange={(e) => onChange(e.target.value)} />
       ) : field.type === "icon" ? (
         <IconPicker value={String(value ?? "")} onChange={onChange} />
+      ) : field.type === "image" ? (
+        <MediaPicker value={String(value ?? "")} onChange={onChange} />
       ) : (
         <input
           type={field.type === "number" ? "number" : "text"}

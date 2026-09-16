@@ -7,6 +7,7 @@ import { buildMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/ui/PageHero";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { YouTubeEmbed } from "@/components/ui/YouTubeEmbed";
 import { ShieldAlert, CalendarCheck } from "lucide-react";
 
 interface Props {
@@ -82,6 +83,12 @@ export default async function ServicePage({ params }: Props) {
       <section className="py-16">
         <div className="container-px grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="space-y-10">
+            {(lang === "ar" ? service.content_ar : service.content_en) && (
+              <div className="leading-relaxed text-ink-secondary">
+                {lang === "ar" ? service.content_ar : service.content_en}
+              </div>
+            )}
+
             {blocks.map((b) => (
               <div key={b.id}>
                 {b.title_ar && (
@@ -89,10 +96,17 @@ export default async function ServicePage({ params }: Props) {
                     {lang === "ar" ? b.title_ar : b.title_en}
                   </h2>
                 )}
-                {b.content_ar && (
+                {b.block_type === "text" && b.content_ar && (
                   <div className="leading-relaxed text-ink-secondary">
                     {lang === "ar" ? b.content_ar : b.content_en}
                   </div>
+                )}
+                {b.block_type === "image" && (b.media as { image?: string })?.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={(b.media as { image: string }).image} alt={lang === "ar" ? b.title_ar ?? "" : b.title_en ?? ""} className="w-full rounded-2xl object-cover shadow-card" loading="lazy" />
+                )}
+                {b.block_type === "video" && (b.media as { youtube_url?: string })?.youtube_url && (
+                  <YouTubeEmbed url={(b.media as { youtube_url: string }).youtube_url} title={lang === "ar" ? b.title_ar ?? undefined : b.title_en ?? undefined} className="shadow-card" />
                 )}
               </div>
             ))}

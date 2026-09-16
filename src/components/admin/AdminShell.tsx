@@ -53,8 +53,6 @@ const NAV: { group: string; items: { href: string; label: string; icon: React.Co
   {
     group: "الموقع",
     items: [
-      { href: "/admin/homepage", label: "الرئيسية", icon: Home },
-      { href: "/admin/about", label: "من نحن", icon: Users },
       { href: "/admin/pages", label: "الصفحات", icon: FileText },
       { href: "/admin/navigation", label: "القائمة", icon: MenuIcon },
     ],
@@ -64,13 +62,13 @@ const NAV: { group: string; items: { href: string; label: string; icon: React.Co
     items: [
       { href: "/admin/service-categories", label: "التصنيفات", icon: Share2 },
       { href: "/admin/services", label: "الخدمات", icon: Scissors },
+      { href: "/admin/service-content", label: "محتوى الخدمات", icon: FileText },
     ],
   },
   {
     group: "الفريق",
     items: [
       { href: "/admin/doctors", label: "الأطباء", icon: Users },
-      { href: "/admin/staff", label: "الموظفون", icon: UserCog },
     ],
   },
   {
