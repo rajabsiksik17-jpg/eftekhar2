@@ -15,8 +15,15 @@ interface Profile {
   full_name: string | null;
   is_super_admin: boolean;
   is_active: boolean;
+  notify_email: string | null;
+  notify_events: string[];
   user_roles: { role_id: string }[];
 }
+
+const NOTIFY_EVENTS = [
+  { value: "appointment", label: "حجز موعد" },
+  { value: "contact", label: "طلب تواصل" },
+];
 
 export function UsersManager() {
   const [users, setUsers] = useState<Profile[]>([]);
@@ -76,6 +83,8 @@ export function UsersManager() {
           is_active: editing.is_active,
           is_super_admin: editing.is_super_admin,
           role_ids: editing.user_roles.map((r) => r.role_id),
+          notify_email: editing.notify_email,
+          notify_events: editing.notify_events,
         }),
       });
       const json = await res.json();
@@ -183,6 +192,36 @@ export function UsersManager() {
               </div>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.is_active} onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })} className="h-4 w-4" /> نشط</label>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.is_super_admin} onChange={(e) => setEditing({ ...editing, is_super_admin: e.target.checked })} className="h-4 w-4" /> مدير عام</label>
+
+              <div className="border-t border-brand-950/10 pt-3">
+                <label className="label">إشعارات البريد</label>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-xs text-ink-muted">البريد الذي تصله الإشعارات</label>
+                    <input className="input" dir="ltr" type="email" value={editing.notify_email ?? ""} onChange={(e) => setEditing({ ...editing, notify_email: e.target.value })} placeholder="admin@example.com" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-ink-muted">أنواع الإشعارات</label>
+                    <div className="space-y-1">
+                      {NOTIFY_EVENTS.map((ev) => (
+                        <label key={ev.value} className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={(editing.notify_events ?? []).includes(ev.value)}
+                            onChange={(e) => {
+                              const list = editing.notify_events ?? [];
+                              setEditing({ ...editing, notify_events: e.target.checked ? [...list, ev.value] : list.filter((x) => x !== ev.value) });
+                            }}
+                            className="h-4 w-4"
+                          />
+                          {ev.label}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <button onClick={update} disabled={saving} className="btn-primary btn-md w-full">{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "حفظ"}</button>
             </div>
           </div>

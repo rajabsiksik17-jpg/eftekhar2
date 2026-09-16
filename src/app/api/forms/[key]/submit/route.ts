@@ -122,28 +122,55 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ key: strin
       message_en: `${key === "appointment" ? "New appointment" : "New message"} from ${name}`,
     });
 
-    // Email notification to admin
-    if (form.notify_enabled && form.notify_email) {
-      const rows = Object.entries(values)
-        .map(([k2, val]) => `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#475569;font-weight:600;">${k2}</td><td style="padding:6px 10px;border:1px solid #e2e8f0;">${typeof val === "object" ? JSON.stringify(val) : String(val)}</td></tr>`)
-        .join("");
+    // Email notification to admins (deduplicated recipients)
+    const eventType = key === "appointment" ? "appointment" : "contact";
+    const rows = Object.entries(values)
+      .map(([k2, val]) => `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#475569;font-weight:600;">${k2}</td><td style="padding:6px 10px;border:1px solid #e2e8f0;">${typeof val === "object" ? JSON.stringify(val) : String(val)}</td></tr>`)
+      .join("");
+    const emailHtml = await wrapEmail(
+      form.name_ar ?? key,
+      `<table style="border-collapse:collapse;width:100%;font-size:14px;">${rows}</table>`,
+    );
+
+    const recipients = new Set<string>();
+    if (form.notify_enabled && form.notify_email) recipients.add(form.notify_email);
+
+    // Users who opted in for this event type
+    const { data: optInUsers } = await service
+      .from("profiles")
+      .select("notify_email")
+      .not("notify_email", "is", null)
+      .contains("notify_events", [eventType]);
+    for (const u of optInUsers ?? []) {
+      if (u.notify_email) recipients.add(u.notify_email);
+    }
+
+    // Default notification email from settings
+    const { data: emailSettings } = await service.from("email_settings").select("notification_email").eq("id", 1).single();
+    if (emailSettings?.notification_email) recipients.add(emailSettings.notification_email);
+
+    let mailOk = true;
+    let mailError = "";
+    for (const to of recipients) {
       const mail = await sendMail({
-        to: form.notify_email,
+        to,
         subject: `${key === "appointment" ? "موعد جديد" : "رسالة جديدة"} — ${form.name_ar ?? key}`,
-        html: await wrapEmail(
-          form.name_ar ?? key,
-          `<table style="border-collapse:collapse;width:100%;font-size:14px;">${rows}</table>`,
-        ),
+        html: emailHtml,
       });
       if (!mail.ok) {
-        await service.from("notifications").insert({
-          type: "email",
-          title_ar: "فشل إرسال بريد الإشعار",
-          title_en: "Notification email failed",
-          message_ar: mail.error ?? "تعذر إرسال بريد الإشعار",
-          message_en: mail.error ?? "Could not send notification email",
-        });
+        mailOk = false;
+        mailError = mail.error ?? "تعذر إرسال البريد";
       }
+    }
+
+    if (!mailOk) {
+      await service.from("notifications").insert({
+        type: "email",
+        title_ar: "فشل إرسال بريد الإشعار",
+        title_en: "Notification email failed",
+        message_ar: mailError,
+        message_en: mailError,
+      });
     }
 
     // Thank-you email to the customer

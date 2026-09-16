@@ -22,9 +22,9 @@ export async function GET() {
 }
 
 const createSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  full_name: z.string().min(1).optional(),
+  email: z.string().email("Invalid email."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
+  full_name: z.string().optional(),
   role_ids: z.array(z.string().uuid()).optional().default([]),
   is_super_admin: z.boolean().optional().default(false),
 });
@@ -34,6 +34,8 @@ const updateSchema = z.object({
   is_active: z.boolean().optional(),
   is_super_admin: z.boolean().optional(),
   role_ids: z.array(z.string().uuid()).optional(),
+  notify_email: z.string().optional(),
+  notify_events: z.array(z.string()).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -42,7 +44,10 @@ export async function POST(req: NextRequest) {
     const service = createServiceClient();
     const body = await req.json().catch(() => null);
     const parsed = createSchema.safeParse(body);
-    if (!parsed.success) throw new ApiError(422, "validation_error", "Invalid input.");
+    if (!parsed.success) {
+      const msg = parsed.error.issues.map((i) => i.message).join(", ");
+      throw new ApiError(422, "validation_error", msg || "Invalid input.");
+    }
 
     const d = parsed.data;
     const { data: authUser, error } = await service.auth.admin.createUser({
@@ -56,7 +61,7 @@ export async function POST(req: NextRequest) {
     await service.from("profiles").insert({
       id: authUser.user!.id,
       email: d.email,
-      full_name: d.full_name ?? null,
+      full_name: d.full_name || null,
       is_super_admin: d.is_super_admin,
       is_active: true,
     });
@@ -78,16 +83,21 @@ export async function PATCH(req: NextRequest) {
     const service = createServiceClient();
     const body = await req.json().catch(() => null);
     const parsed = updateSchema.safeParse(body);
-    if (!parsed.success) throw new ApiError(422, "validation_error", "Invalid input.");
+    if (!parsed.success) {
+      const msg = parsed.error.issues.map((i) => i.message).join(", ");
+      throw new ApiError(422, "validation_error", msg || "Invalid input.");
+    }
 
     const id = (body as { id?: string }).id;
     if (!id) throw new ApiError(400, "missing_id");
     const d = parsed.data;
 
     const profilePatch: Record<string, unknown> = {};
-    if (d.full_name !== undefined) profilePatch.full_name = d.full_name;
+    if (d.full_name !== undefined) profilePatch.full_name = d.full_name || null;
     if (d.is_active !== undefined) profilePatch.is_active = d.is_active;
     if (d.is_super_admin !== undefined) profilePatch.is_super_admin = d.is_super_admin;
+    if (d.notify_email !== undefined) profilePatch.notify_email = d.notify_email || null;
+    if (d.notify_events !== undefined) profilePatch.notify_events = d.notify_events;
     if (Object.keys(profilePatch).length) {
       await service.from("profiles").update(profilePatch).eq("id", id);
     }

@@ -18,6 +18,7 @@ interface EmailSettings {
   imap_encryption?: string;
   imap_enabled?: boolean;
   imap_status?: string | null;
+  notification_email?: string;
 }
 
 export function EmailSettingsForm() {
@@ -151,6 +152,7 @@ export function EmailSettingsForm() {
             </select>
           </Field>
           <Field label="البريد المُرسِل (From)"><input className="input" dir="ltr" value={data.smtp_from ?? ""} onChange={(e) => set("smtp_from", e.target.value)} /></Field>
+          <Field label="البريد الأساسي لتلقي التنبيهات"><input className="input" dir="ltr" type="email" value={data.notification_email ?? ""} onChange={(e) => set("notification_email", e.target.value)} placeholder="info@eftekhar-services.com" /></Field>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <button onClick={() => test("smtp")} disabled={testing === "smtp"} className="btn-outline btn-md">

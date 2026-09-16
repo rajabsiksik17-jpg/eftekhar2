@@ -38,7 +38,7 @@ export async function PUT(req: NextRequest) {
     const fields = [
       "smtp_host", "smtp_port", "smtp_username", "smtp_encryption", "smtp_from",
       "imap_host", "imap_port", "imap_username", "imap_encryption",
-      "smtp_enabled", "imap_enabled",
+      "smtp_enabled", "imap_enabled", "notification_email",
     ];
     for (const f of fields) if (f in body) patch[f] = body[f];
     if (typeof body.smtp_password === "string" && body.smtp_password) patch.smtp_password_enc = encrypt(body.smtp_password);
