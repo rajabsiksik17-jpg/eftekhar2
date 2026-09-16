@@ -13,11 +13,15 @@ import {
   ChevronUp,
   ChevronDown,
   X,
+  FileText,
+  Eye,
+  Mail,
 } from "lucide-react";
 import { IconPicker } from "@/components/admin/IconPicker";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { VideoInput } from "@/components/admin/VideoInput";
 import { ServiceSelect } from "@/components/admin/ServiceSelect";
+import { ServiceBlocksManager } from "@/components/admin/ServiceBlocksManager";
 
 type Row = Record<string, unknown>;
 
@@ -30,6 +34,9 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
   const [editing, setEditing] = useState<Row | null>(null);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [contentFor, setContentFor] = useState<Row | null>(null);
+  const [viewing, setViewing] = useState<Row | null>(null);
+  const [emailing, setEmailing] = useState<Row | null>(null);
   const pageSize = schema.listPageSize ?? 50;
 
   const load = useCallback(async () => {
@@ -129,7 +136,7 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
             className="input w-64 ps-9"
           />
         </div>
-        {schema.fields.length > 0 && (
+        {schema.fields.length > 0 && !schema.readOnly && (
           <button onClick={() => setCreating(true)} className="btn-primary btn-md">
             <Plus className="h-4 w-4" />
             إضافة {schema.singular}
@@ -173,20 +180,40 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
                     ))}
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => reorder(i, -1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Up">
-                          <ChevronUp className="h-4 w-4" />
-                        </button>
-                        <button onClick={() => reorder(i, 1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Down">
-                          <ChevronDown className="h-4 w-4" />
-                        </button>
-                        {schema.fields.length > 0 && (
+                        {schema.readOnly ? (
                           <>
-                            <button onClick={() => setEditing(row)} className="rounded p-1 text-brand-600 hover:bg-brand-100" aria-label="Edit">
-                              <Pencil className="h-4 w-4" />
+                            <button onClick={() => setViewing(row)} className="rounded p-1 text-brand-600 hover:bg-brand-100" aria-label="View">
+                              <Eye className="h-4 w-4" />
                             </button>
-                            <button onClick={() => remove(row)} className="rounded p-1 text-red-500 hover:bg-red-50" aria-label="Delete">
-                              <Trash2 className="h-4 w-4" />
+                            {entity === "appointments" && (
+                              <button onClick={() => setEmailing(row)} className="rounded p-1 text-brand-600 hover:bg-brand-100" aria-label="Send email">
+                                <Mail className="h-4 w-4" />
+                              </button>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <button onClick={() => reorder(i, -1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Up">
+                              <ChevronUp className="h-4 w-4" />
                             </button>
+                            <button onClick={() => reorder(i, 1)} className="rounded p-1 text-ink-muted hover:bg-brand-100" aria-label="Down">
+                              <ChevronDown className="h-4 w-4" />
+                            </button>
+                            {schema.fields.length > 0 && (
+                              <>
+                                {entity === "services" && (
+                                  <button onClick={() => setContentFor(row)} className="rounded p-1 text-brand-600 hover:bg-brand-100" aria-label="Content">
+                                    <FileText className="h-4 w-4" />
+                                  </button>
+                                )}
+                                <button onClick={() => setEditing(row)} className="rounded p-1 text-brand-600 hover:bg-brand-100" aria-label="Edit">
+                                  <Pencil className="h-4 w-4" />
+                                </button>
+                                <button onClick={() => remove(row)} className="rounded p-1 text-red-500 hover:bg-red-50" aria-label="Delete">
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </>
+                            )}
                           </>
                         )}
                       </div>
@@ -221,6 +248,26 @@ export function EntityManager({ entity, schema }: { entity: string; schema: Enti
           onSave={save}
           saving={saving}
         />
+      )}
+
+      {contentFor && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/50 p-4">
+          <div className="my-8 w-full max-w-2xl rounded-2xl bg-white p-6" dir="rtl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-bold text-ink">محتوى الخدمة: {String(contentFor.name_ar ?? "")}</h2>
+              <button onClick={() => setContentFor(null)} className="rounded-lg p-1 text-brand-500 hover:bg-brand-50"><X className="h-5 w-5" /></button>
+            </div>
+            <ServiceBlocksManager initialServiceId={String(contentFor.id)} />
+          </div>
+        </div>
+      )}
+
+      {viewing && (
+        <ViewModal row={viewing} schema={schema} onClose={() => setViewing(null)} onEmail={() => { setEmailing(viewing); setViewing(null); }} />
+      )}
+
+      {emailing && (
+        <EmailModal row={emailing} onClose={() => setEmailing(null)} />
       )}
     </div>
   );
@@ -370,6 +417,117 @@ function FieldInput({
         />
       )}
       {field.help && <p className="mt-1 text-xs text-brand-400">{field.help}</p>}
+    </div>
+  );
+}
+
+function ViewModal({ row, schema, onClose, onEmail }: { row: Row; schema: EntitySchema; onClose: () => void; onEmail: () => void }) {
+  const statusMap: Record<string, string> = { new: "جديد", pending: "قيد الانتظار", confirmed: "مؤكد", completed: "مكتمل", cancelled: "ملغي", no_show: "لم يحضر" };
+  const value = (v: unknown, type?: string) => {
+    if (type === "date" && v) return new Date(String(v)).toLocaleString("ar");
+    if (type === "badge" && v) return statusMap[String(v)] ?? String(v);
+    if (type === "boolean") return v ? "نعم" : "لا";
+    if (v === null || v === undefined || v === "") return "—";
+    return String(v);
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/50 p-4">
+      <div className="my-8 w-full max-w-lg rounded-2xl bg-white p-6" dir="rtl">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-bold text-ink">تفاصيل {schema.singular}</h2>
+          <button onClick={onClose}><X className="h-5 w-5 text-brand-500" /></button>
+        </div>
+        <dl className="divide-y divide-brand-950/5">
+          {schema.fields.map((f) => {
+            const col = schema.columns.find((c) => c.key === f.name);
+            const type = col?.type;
+            return (
+              <div key={f.name} className="flex justify-between gap-4 py-2.5">
+                <dt className="shrink-0 text-sm font-medium text-ink-muted">{f.label}</dt>
+                <dd className="text-sm text-ink-secondary text-end">{value(row[f.name], type)}</dd>
+              </div>
+            );
+          })}
+        </dl>
+        {onEmail && (
+          <button onClick={onEmail} className="btn-primary btn-md mt-4 w-full"><Mail className="h-4 w-4" /> إرسال بريد</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function EmailModal({ row, onClose }: { row: Row; onClose: () => void }) {
+  const [to, setTo] = useState(String(row.email ?? ""));
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [sending, setSending] = useState(false);
+
+  const submit = async () => {
+    if (!to || !subject || !body) {
+      toast.error("يرجى تعبئة البريد والموضوع والنص");
+      return;
+    }
+    setSending(true);
+    try {
+      const attachments = await Promise.all(
+        files.map(async (f) => {
+          const buf = await f.arrayBuffer();
+          const bytes = new Uint8Array(buf);
+          let binary = "";
+          for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+          return { filename: f.name, content: btoa(binary), contentType: f.type };
+        }),
+      );
+      const res = await fetch("/api/admin/email?action=send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, subject, html: body.replace(/\n/g, "<br/>"), attachments }),
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.message ?? "error");
+      toast.success("تم إرسال البريد");
+      onClose();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "فشل الإرسال");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/50 p-4">
+      <div className="my-8 w-full max-w-xl rounded-2xl bg-white p-6" dir="rtl">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="font-bold text-ink">إرسال بريد</h2>
+          <button onClick={onClose}><X className="h-5 w-5 text-brand-500" /></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="label">إلى</label>
+            <input className="input" dir="ltr" type="email" value={to} onChange={(e) => setTo(e.target.value)} />
+          </div>
+          <div>
+            <label className="label">الموضوع</label>
+            <input className="input" value={subject} onChange={(e) => setSubject(e.target.value)} />
+          </div>
+          <div>
+            <label className="label">النص</label>
+            <textarea className="input min-h-[120px]" value={body} onChange={(e) => setBody(e.target.value)} />
+          </div>
+          <div>
+            <label className="label">المرفقات</label>
+            <input type="file" multiple className="block w-full text-sm text-ink-secondary" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} />
+            {files.length > 0 && (
+              <div className="mt-1 text-xs text-ink-muted">{files.map((f) => f.name).join("، ")}</div>
+            )}
+          </div>
+          <button onClick={submit} disabled={sending} className="btn-primary btn-md w-full">
+            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />} إرسال
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

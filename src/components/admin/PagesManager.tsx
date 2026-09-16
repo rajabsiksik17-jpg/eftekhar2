@@ -283,21 +283,21 @@ function SectionEditor({ section, onChange, onClose, onSave, saving }: {
           )}
 
           {withVideo && (
-            <div className="sm:col-span-2"><Field label="الفيديو"><VideoInput value={c.video?.youtube_url ?? ""} onChange={(v) => setContent({ video: { ...(c.video ?? {}), youtube_url: v } })} /></Field></div>
+            <>
+              <div className="sm:col-span-2"><Field label="الفيديو"><VideoInput value={c.video?.youtube_url ?? ""} onChange={(v) => setContent({ video: { ...(c.video ?? {}), youtube_url: v } })} /></Field></div>
+              <VideoControls video={c.video ?? {}} onChange={(patch) => setContent({ video: { ...(c.video ?? {}), ...patch } })} />
+            </>
           )}
 
           {withIntroVideo && (
             <>
               <div className="sm:col-span-2"><Field label="الفيديو (YouTube أو ملف)"><VideoInput value={c.video?.url ?? ""} onChange={(v) => setContent({ video: { ...(c.video ?? {}), url: v } })} /></Field></div>
-              <Toggle label="تشغيل تلقائي" checked={Boolean(c.video?.autoplay)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), autoplay: v } })} />
-              <Toggle label="صامت" checked={Boolean(c.video?.muted)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), muted: v } })} />
-              <Toggle label="تكرار" checked={Boolean(c.video?.loop)} onChange={(v) => setContent({ video: { ...(c.video ?? {}), loop: v } })} />
-              <Toggle label="إظهار أزرار التحكم" checked={c.video?.controls !== false} onChange={(v) => setContent({ video: { ...(c.video ?? {}), controls: v } })} />
+              <VideoControls video={c.video ?? {}} onChange={(patch) => setContent({ video: { ...(c.video ?? {}), ...patch } })} />
             </>
           )}
 
           {withMobileToggle && (
-            <Toggle label="على الجوال: الصورة أسفل العنوان" checked={settings.image_below_mobile !== false} onChange={(v) => setSettings({ image_below_mobile: v })} />
+            <Toggle label="على الجوال: الوسائط (صورة/فيديو) أسفل العنوان" checked={settings.image_below_mobile !== false} onChange={(v) => setSettings({ image_below_mobile: v })} />
           )}
 
           {withStatsSettings && (
@@ -391,5 +391,24 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
         {label}
       </label>
     </div>
+  );
+}
+
+function VideoControls({ video, onChange }: { video: Record<string, unknown>; onChange: (patch: Record<string, unknown>) => void }) {
+  return (
+    <>
+      <Toggle label="تشغيل تلقائي" checked={Boolean(video.autoplay)} onChange={(v) => onChange({ autoplay: v })} />
+      <Toggle label="صامت" checked={Boolean(video.muted)} onChange={(v) => onChange({ muted: v })} />
+      <Toggle label="تكرار" checked={Boolean(video.loop)} onChange={(v) => onChange({ loop: v })} />
+      <Toggle label="إظهار أزرار التحكم" checked={video.controls !== false} onChange={(v) => onChange({ controls: v })} />
+      <Field label="حجم الفيديو">
+        <select className="input" value={String(video.ratio ?? "video")} onChange={(e) => onChange({ ratio: e.target.value })}>
+          <option value="video">عريض (16:9)</option>
+          <option value="wide">عريض جدًا (21:9)</option>
+          <option value="square">مربع (1:1)</option>
+          <option value="portrait">طولي / ريلز (9:16)</option>
+        </select>
+      </Field>
+    </>
   );
 }

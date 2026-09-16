@@ -29,14 +29,17 @@ export function DoctorsSlider({
     if (!el) return;
     const card = el.querySelector<HTMLElement>("[data-card]");
     const w = card ? card.offsetWidth + 20 : 300;
-    el.scrollBy({ left: dir * w, behavior: "smooth" });
+    const rtl = lang === "ar";
+    el.scrollBy({ left: dir * w * (rtl ? -1 : 1), behavior: "smooth" });
   };
 
   const onScroll = () => {
     const el = trackRef.current;
     if (!el) return;
-    setAtStart(el.scrollLeft < 10);
-    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 10);
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    const current = Math.abs(el.scrollLeft);
+    setAtStart(current < 10);
+    setAtEnd(current >= maxScroll - 10);
   };
 
   return (

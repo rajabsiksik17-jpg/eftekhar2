@@ -23,9 +23,9 @@ interface Block {
   display_order: number;
 }
 
-export function ServiceBlocksManager() {
+export function ServiceBlocksManager({ initialServiceId }: { initialServiceId?: string }) {
   const [services, setServices] = useState<Service[]>([]);
-  const [serviceId, setServiceId] = useState<string>("");
+  const [serviceId, setServiceId] = useState<string>(initialServiceId ?? "");
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState<Block | null>(null);
@@ -35,8 +35,8 @@ export function ServiceBlocksManager() {
     const res = await fetch("/api/admin/services?pageSize=500").then((r) => r.json());
     const list = (res.data?.items ?? []) as Service[];
     setServices(list);
-    if (!serviceId && list.length) setServiceId(list[0].id);
-  }, [serviceId]);
+    if (!serviceId && list.length && !initialServiceId) setServiceId(list[0].id);
+  }, [serviceId, initialServiceId]);
 
   const loadBlocks = useCallback(async () => {
     setLoading(true);
@@ -101,12 +101,14 @@ export function ServiceBlocksManager() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="label">الخدمة</label>
-        <select className="input" value={serviceId} onChange={(e) => setServiceId(e.target.value)}>
-          {services.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
-        </select>
-      </div>
+      {!initialServiceId && (
+        <div>
+          <label className="label">الخدمة</label>
+          <select className="input" value={serviceId} onChange={(e) => setServiceId(e.target.value)}>
+            {services.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
+          </select>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-ink-muted">محتوى الخدمة (نصوص، صور، فيديوهات)</p>

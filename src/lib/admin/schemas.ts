@@ -41,6 +41,7 @@ export interface EntitySchema {
   baseFilter?: Record<string, unknown>;
   hiddenDefaults?: Record<string, unknown>;
   listPageSize?: number;
+  readOnly?: boolean;
 }
 
 const iconField = (label = "الأيقونة"): Field => ({
@@ -180,6 +181,7 @@ export const SCHEMAS: Record<string, EntitySchema> = {
     label: "المواعيد",
     singular: "موعد",
     titleField: "name",
+    readOnly: true,
     columns: [
       { key: "name", label: "الاسم" },
       { key: "phone", label: "الهاتف" },

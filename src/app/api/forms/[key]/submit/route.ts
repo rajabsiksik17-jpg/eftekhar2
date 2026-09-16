@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createServiceClient } from "@/lib/supabase/client";
 import { jsonOk, jsonError, ApiError, rateLimit } from "@/lib/api";
 import { sendMail } from "@/lib/email";
+import { wrapEmail } from "@/lib/mail-template";
 import { validatePhone } from "@/lib/phone";
 
 export const dynamic = "force-dynamic";
@@ -121,15 +122,30 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ key: strin
       message_en: `${key === "appointment" ? "New appointment" : "New message"} from ${name}`,
     });
 
-    // Email notification
+    // Email notification to admin
     if (form.notify_enabled && form.notify_email) {
       const rows = Object.entries(values)
-        .map(([k2, val]) => `<tr><td><strong>${k2}</strong></td><td>${typeof val === "object" ? JSON.stringify(val) : String(val)}</td></tr>`)
+        .map(([k2, val]) => `<tr><td style="padding:6px 10px;border:1px solid #e2e8f0;color:#475569;font-weight:600;">${k2}</td><td style="padding:6px 10px;border:1px solid #e2e8f0;">${typeof val === "object" ? JSON.stringify(val) : String(val)}</td></tr>`)
         .join("");
       await sendMail({
         to: form.notify_email,
-        subject: `${key === "appointment" ? "New appointment" : "New message"} - ${form.name_ar ?? key}`,
-        html: `<div style="font-family:sans-serif"><h2>${form.name_ar ?? key}</h2><table cellpadding="6" border="1" style="border-collapse:collapse">${rows}</table></div>`,
+        subject: `${key === "appointment" ? "موعد جديد" : "رسالة جديدة"} — ${form.name_ar ?? key}`,
+        html: await wrapEmail(
+          form.name_ar ?? key,
+          `<table style="border-collapse:collapse;width:100%;font-size:14px;">${rows}</table>`,
+        ),
+      });
+    }
+
+    // Thank-you email to the customer
+    if (email) {
+      await sendMail({
+        to: email,
+        subject: key === "appointment" ? "تم استلام طلب حجز موعدك" : "تم استلام رسالتك",
+        html: await wrapEmail(
+          key === "appointment" ? `مرحبًا ${name}` : `مرحبًا ${name}`,
+          `<p>شكرًا لتواصلك معنا. ${key === "appointment" ? "تم استلام طلب حجز موعدك بنجاح وسيتواصل معك فريقنا قريبًا لتأكيد الموعد." : "تم استلام رسالتك بنجاح وسيتم الرد عليك في أقرب وقت."}</p>`,
+        ),
       });
     }
 

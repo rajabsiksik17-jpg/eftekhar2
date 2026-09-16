@@ -62,7 +62,6 @@ const NAV: { group: string; items: { href: string; label: string; icon: React.Co
     items: [
       { href: "/admin/service-categories", label: "التصنيفات", icon: Share2 },
       { href: "/admin/services", label: "الخدمات", icon: Scissors },
-      { href: "/admin/service-content", label: "محتوى الخدمات", icon: FileText },
     ],
   },
   {
@@ -117,6 +116,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [notif, setNotif] = useState({ appointment: 0, contact: 0 });
   const pathname = usePathname();
   const router = useRouter();
 
@@ -143,6 +143,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     loadMe();
   }, [loadMe]);
+
+  const loadNotifications = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/notifications");
+      if (res.ok) {
+        const json = await res.json();
+        setNotif(json.data ?? { appointment: 0, contact: 0 });
+      }
+    } catch {
+      /* noop */
+    }
+  }, []);
+
+  useEffect(() => {
+    loadNotifications();
+    const t = setInterval(loadNotifications, 30000);
+    return () => clearInterval(t);
+  }, [loadNotifications]);
+
+  // Mark notifications as read when viewing the relevant pages
+  useEffect(() => {
+    if (pathname.startsWith("/admin/appointments") && notif.appointment > 0) {
+      fetch("/api/admin/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "appointment" }) }).then(() => loadNotifications());
+    }
+    if (pathname.startsWith("/admin/messages") && notif.contact > 0) {
+      fetch("/api/admin/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "contact" }) }).then(() => loadNotifications());
+    }
+  }, [pathname, notif, loadNotifications]);
 
   const logout = async () => {
     await fetch("/api/admin/auth/logout", { method: "POST" });
@@ -182,6 +210,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               )}
               {g.items.map((item) => {
                 const active = pathname.startsWith(item.href);
+                const badge = item.href === "/admin/appointments" ? notif.appointment : item.href === "/admin/messages" ? notif.contact : 0;
                 return (
                   <Link
                     key={item.href}
@@ -196,7 +225,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     title={collapsed ? item.label : undefined}
                   >
                     <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && item.label}
+                    {!collapsed && <span className="flex-1">{item.label}</span>}
+                    {!collapsed && badge > 0 && (
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                        {badge}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

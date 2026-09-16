@@ -110,9 +110,9 @@ export function GalleryVideosSection({
                       key={v.id}
                       type="button"
                       onClick={() => setActiveVideo(v)}
-                      className="group w-64 shrink-0 snap-start overflow-hidden rounded-2xl border border-brand-950/10 bg-white text-start shadow-card"
+                      className="group w-44 shrink-0 snap-start overflow-hidden rounded-2xl border border-brand-950/10 bg-white text-start shadow-card"
                     >
-                      <div className="relative aspect-video w-full bg-brand-100">
+                      <div className="relative aspect-[9/16] w-full bg-brand-100">
                         {thumb ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={thumb} alt={lang === "ar" ? v.title_ar : v.title_en} className="h-full w-full object-cover" />

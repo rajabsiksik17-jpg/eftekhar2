@@ -3,8 +3,9 @@ import { createServiceClient } from "@/lib/supabase/client";
 import { requireAdmin, logAudit } from "@/lib/auth";
 import { jsonOk, jsonError, ApiError } from "@/lib/api";
 import { encrypt, decrypt } from "@/lib/encryption";
-import { testSmtp, sendMail } from "@/lib/email";
+import { testSmtp, sendMail, sendMailWithAttachments } from "@/lib/email";
 import { testImap } from "@/lib/imap";
+import { wrapEmail } from "@/lib/mail-template";
 
 export const dynamic = "force-dynamic";
 
@@ -109,14 +110,63 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "send-test") {
-      const result = await sendMail({
-        to: body.to,
-        subject: body.subject ?? "Test email from Eftekar Clinics",
-        html: "<p>This is a test email from your Eftekar Clinics admin dashboard.</p>",
-        text: "This is a test email from your Eftekar Clinics admin dashboard.",
-      });
+      // Prefer the form values (so it works even before saving); fall back to saved config.
+      let result: { ok: boolean; error?: string };
+      if (body.host && body.username) {
+        const { createTransporter } = await import("@/lib/email");
+        const transporter = await createTransporter({
+          host: body.host,
+          port: Number(body.port ?? 587),
+          username: body.username,
+          password: body.password ?? decrypt((await service.from("email_settings").select("smtp_password_enc").eq("id", 1).single()).data?.smtp_password_enc),
+          encryption: body.encryption ?? "TLS",
+          from: body.from ?? body.username,
+        });
+        if (!transporter) {
+          result = { ok: false, error: "Invalid configuration." };
+        } else {
+          try {
+            await transporter.sendMail({
+              from: body.from ?? body.username,
+              to: body.to,
+              subject: body.subject ?? "Test email from Eftekar Clinics",
+              html: await wrapEmail("رسالة تجريبية", "<p>هذه رسالة تجريبية من لوحة تحكم عيادات افتخار.</p>"),
+            });
+            result = { ok: true };
+          } catch (e) {
+            result = { ok: false, error: e instanceof Error ? e.message : "Send failed." };
+          }
+        }
+      } else {
+        result = await sendMail({
+          to: body.to,
+          subject: body.subject ?? "Test email from Eftekar Clinics",
+          html: await wrapEmail("رسالة تجريبية", "<p>هذه رسالة تجريبية من لوحة تحكم عيادات افتخار.</p>"),
+        });
+      }
       await markStatus("smtp", result.ok, result.error);
       await logAudit({ userId: admin.user.id, action: result.ok ? "smtp.send_test_ok" : "smtp.send_test_failed" });
+      return result.ok ? jsonOk({ ok: true }) : jsonError(new ApiError(400, "smtp_failed", result.error));
+    }
+
+    if (action === "send") {
+      const to = String(body.to ?? "");
+      if (!to) throw new ApiError(400, "missing_to", "Recipient email is required.");
+      const attachments = Array.isArray(body.attachments)
+        ? body.attachments.map((a: { filename?: string; content?: string; contentType?: string }) => ({
+            filename: a.filename ?? "attachment",
+            content: Buffer.from(a.content ?? "", "base64"),
+            contentType: a.contentType,
+          }))
+        : undefined;
+      const result = await sendMailWithAttachments({
+        to,
+        subject: body.subject ?? "Eftekar Clinics",
+        html: await wrapEmail(body.subject ?? "رسالة", String(body.html ?? "")),
+        attachments,
+      });
+      await markStatus("smtp", result.ok, result.error);
+      await logAudit({ userId: admin.user.id, action: result.ok ? "email.send_ok" : "email.send_failed" });
       return result.ok ? jsonOk({ ok: true }) : jsonError(new ApiError(400, "smtp_failed", result.error));
     }
 

@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock, Navigation, Video } from "lucide-react";
 interface Content {
   ar?: { text?: string };
   en?: { text?: string };
-  video?: { youtube_url?: string; thumbnail?: string };
+  video?: { youtube_url?: string; url?: string; thumbnail?: string; autoplay?: boolean; muted?: boolean; loop?: boolean; controls?: boolean; ratio?: string };
 }
 
 export function WayToClinic({
@@ -23,7 +23,8 @@ export function WayToClinic({
   const title = lang === "ar" ? section.title_ar : section.title_en;
   const subtitle = lang === "ar" ? section.subtitle_ar : section.subtitle_en;
   const localized = lang === "ar" ? content.ar : content.en;
-  const videoUrl = content.video?.youtube_url ?? "";
+  const videoUrl = content.video?.url ?? content.video?.youtube_url ?? "";
+  const video = content.video ?? {};
   const workingHours = (Array.isArray(contact?.working_hours) ? contact.working_hours : []) as Record<string, string>[];
 
   return (
@@ -33,7 +34,7 @@ export function WayToClinic({
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div className="relative">
             {videoUrl ? (
-              <VideoPlayer config={{ url: videoUrl }} className="shadow-soft ring-1 ring-brand-950/5" />
+              <VideoPlayer config={{ url: videoUrl, autoplay: video.autoplay, muted: video.muted, loop: video.loop, controls: video.controls, ratio: video.ratio as "video" | "square" | "portrait" | "wide" | undefined }} className="shadow-soft ring-1 ring-brand-950/5" />
             ) : (
               <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-brand-300 bg-brand-50 text-brand-400">
                 <Video className="h-12 w-12" />

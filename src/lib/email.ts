@@ -58,6 +58,34 @@ export async function sendMail(
   }
 }
 
+export async function sendMailWithAttachments(
+  opts: {
+    to: string;
+    subject: string;
+    html: string;
+    text?: string;
+    attachments?: { filename: string; content: Buffer; contentType?: string }[];
+  },
+): Promise<{ ok: boolean; error?: string }> {
+  const config = await getSmtpConfig();
+  if (!config) return { ok: false, error: "SMTP is not configured." };
+  const transporter = await createTransporter(config);
+  if (!transporter) return { ok: false, error: "Could not create transporter." };
+  try {
+    await transporter.sendMail({
+      from: config.from,
+      to: opts.to,
+      subject: opts.subject,
+      html: opts.html,
+      text: opts.text,
+      attachments: opts.attachments,
+    });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Send failed." };
+  }
+}
+
 export async function testSmtp(config: SmtpConfig): Promise<{ ok: boolean; error?: string }> {
   try {
     const transporter = await createTransporter(config);

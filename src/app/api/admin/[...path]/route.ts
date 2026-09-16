@@ -82,6 +82,16 @@ async function handle(req: NextRequest, ctx: { params: Promise<{ path: string[] 
 
     const row = pickColumns(body, config.writeColumns);
     if (config.baseFilter) Object.assign(row, config.baseFilter);
+    // Auto-fill display_order when not provided
+    if (config.order === "display_order" && (row.display_order === undefined || row.display_order === null || row.display_order === "")) {
+      const { data: maxRow } = await service
+        .from(config.table)
+        .select("display_order")
+        .order("display_order", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      row.display_order = ((maxRow?.display_order as number) ?? 0) + 1;
+    }
     const { data, error } = await service.from(config.table).insert(row).select().single();
     if (error) throw new ApiError(400, "db_error", error.message);
     revalidate(config.tags);

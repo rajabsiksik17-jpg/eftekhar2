@@ -5,6 +5,7 @@ import { jsonOk, jsonError, ApiError, rateLimit } from "@/lib/api";
 import { loginSchema, otpVerifySchema } from "@/lib/validation";
 import { generateOtp, hashToken, randomToken } from "@/lib/encryption";
 import { sendMail } from "@/lib/email";
+import { wrapEmail } from "@/lib/mail-template";
 import {
   getVerifiedSessionCookieName,
   getTrustCookieName,
@@ -156,7 +157,12 @@ async function login(req: NextRequest) {
   const mail = await sendMail({
     to: user.email!,
     subject: "Your login code - Eftekar Admin",
-    html: `<div style="font-family:sans-serif;direction:ltr"><h2>Your verification code</h2><p>Use the following code to complete your login:</p><h1 style="letter-spacing:6px">${otp}</h1><p>The code expires in 10 minutes.</p></div>`,
+    html: await wrapEmail(
+      "رمز التحقق لتسجيل الدخول",
+      `<p>استخدم الرمز التالي لإكمال تسجيل الدخول:</p>
+       <div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:8px;color:#2563eb;padding:16px;background:#eff6ff;border-radius:12px;" dir="ltr">${otp}</div>
+       <p style="margin-top:16px;color:#64748b;">ينتهي الرمز خلال 10 دقائق.</p>`,
+    ),
     text: `Your verification code is ${otp}. It expires in 10 minutes.`,
   });
 

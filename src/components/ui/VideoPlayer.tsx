@@ -19,7 +19,15 @@ export interface VideoConfig {
   controls?: boolean;
   poster?: string;
   start?: number;
+  ratio?: "video" | "square" | "portrait" | "wide";
 }
+
+const RATIO: Record<string, string> = {
+  video: "aspect-video",
+  square: "aspect-square",
+  portrait: "aspect-[9/16]",
+  wide: "aspect-[21/9]",
+};
 
 /**
  * Unified video player: YouTube (privacy-enhanced, minimal branding) or
@@ -33,6 +41,7 @@ export function VideoPlayer({ config, className }: { config: VideoConfig; classN
   const loop = Boolean(config.loop);
   const controls = config.controls !== false;
   const poster = config.poster;
+  const ratioClass = RATIO[config.ratio ?? "video"] ?? "aspect-video";
 
   if (isYouTube(url)) {
     const id = youtubeId(url);
@@ -47,7 +56,7 @@ export function VideoPlayer({ config, className }: { config: VideoConfig; classN
     if (config.start) params.set("start", String(config.start));
     return (
       <iframe
-        className={cn("aspect-video w-full rounded-2xl", className)}
+        className={cn(ratioClass, "w-full rounded-2xl", className)}
         src={`https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`}
         title="Video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
@@ -61,7 +70,7 @@ export function VideoPlayer({ config, className }: { config: VideoConfig; classN
     return (
       // eslint-disable-next-line jsx-a11y/media-has-caption
       <video
-        className={cn("aspect-video w-full rounded-2xl object-cover", className)}
+        className={cn(ratioClass, "w-full rounded-2xl object-cover", className)}
         src={url}
         poster={poster}
         controls={controls}
