@@ -58,6 +58,7 @@ export function PagesManager() {
   const [editing, setEditing] = useState<Section | null>(null);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [orderDirty, setOrderDirty] = useState(false);
 
   const loadPages = useCallback(async () => {
     const res = await fetch("/api/admin/pages?pageSize=100").then((r) => r.json());
@@ -84,18 +85,27 @@ export function PagesManager() {
     return json;
   };
 
-  const reorder = async (i: number, dir: -1 | 1) => {
+  const reorder = (i: number, dir: -1 | 1) => {
     const t = i + dir;
     if (t < 0 || t >= sections.length) return;
     const next = [...sections];
     const [m] = next.splice(i, 1);
     next.splice(t, 0, m);
     setSections(next);
+    setOrderDirty(true);
+  };
+
+  const saveOrder = async () => {
+    setSaving(true);
     try {
-      await call("POST", "/api/admin/page-sections", { ids: next.map((s) => s.id) });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "تعذر إعادة الترتيب");
+      await call("POST", "/api/admin/page-sections", { ids: sections.map((s) => s.id) });
+      toast.success("تم حفظ الترتيب");
+      setOrderDirty(false);
       loadSections(selectedId!);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذر حفظ الترتيب");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -164,9 +174,16 @@ export function PagesManager() {
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-ink-muted">أقسام الصفحة — رتّبها وعدّل محتواها بالكامل</p>
-          <button onClick={() => setCreating(true)} className="btn-primary btn-md"><Plus className="h-4 w-4" /> إضافة قسم</button>
+          <div className="flex items-center gap-2">
+            {orderDirty && (
+              <button onClick={saveOrder} disabled={saving} className="btn-accent btn-md">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ الترتيب
+              </button>
+            )}
+            <button onClick={() => setCreating(true)} className="btn-primary btn-md"><Plus className="h-4 w-4" /> إضافة قسم</button>
+          </div>
         </div>
 
         {loading ? (

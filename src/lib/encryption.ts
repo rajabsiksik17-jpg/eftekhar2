@@ -1,9 +1,14 @@
 import crypto from "crypto";
 
+// The encryption key MUST be stable across all environments (local dev,
+// Hostinger, etc.). The Supabase service-role key is identical everywhere for
+// a given project, so we derive the key from it ONLY. Using ADMIN_SECRET here
+// caused a mismatch: passwords encrypted in one environment could not be
+// decrypted in another, silently breaking SMTP auth.
 function getSecret(): string {
-  const secret = process.env.ADMIN_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!secret) {
-    throw new Error("ADMIN_SECRET or SUPABASE_SERVICE_ROLE_KEY must be set for encryption.");
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY must be set for encryption.");
   }
   return secret;
 }

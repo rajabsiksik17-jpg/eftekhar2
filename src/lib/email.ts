@@ -15,11 +15,15 @@ export async function getSmtpConfig(): Promise<SmtpConfig | null> {
   const supabase = createServiceClient();
   const { data } = await supabase.from("email_settings").select("*").eq("id", 1).single();
   if (!data?.smtp_host || !data?.smtp_username) return null;
+  const password = decrypt(data.smtp_password_enc);
+  if (!password) {
+    console.error("[email] SMTP password could not be decrypted. Re-save the SMTP password in the admin dashboard.");
+  }
   return {
     host: data.smtp_host,
     port: data.smtp_port ?? 587,
     username: data.smtp_username,
-    password: decrypt(data.smtp_password_enc),
+    password,
     encryption: (data.smtp_encryption as SmtpConfig["encryption"]) ?? "TLS",
     from: data.smtp_from ?? data.smtp_username,
   };
